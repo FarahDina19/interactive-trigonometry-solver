@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigonometric Ratios - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --background: #f9fafb;
+            --surface: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --method-blue: #3b82f6;
+            --method-green: #14b8a6;
+            --method-purple: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1em;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .objective-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .objective-item {
+            padding: 15px;
+            background: #f0f4ff;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            font-size: 1.05em;
+        }
+
+        .objective-item::before {
+            content: "✓ ";
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .formula-box h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .formula-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid var(--method-blue);
+        }
+
+        .formula-label {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .formula-content {
+            margin-top: 5px;
+            font-size: 1.1em;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box h4 {
+            color: var(--danger);
+            margin-bottom: 10px;
+        }
+
+        .error-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .error-box li::before {
+            content: "✗ ";
+            color: var(--danger);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .example-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid var(--primary);
+        }
+
+        .example-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .difficulty-badge.mudah {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .difficulty-badge.sederhana {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-badge.mencabar {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .solution-step {
+            background: #f9fafb;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 4px;
+            border-left: 3px solid var(--method-green);
+        }
+
+        .step-number {
+            background: var(--method-green);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .answer-box {
+            background: #f0fdf4;
+            border: 2px solid var(--secondary);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .answer-box::before {
+            content: "Jawapan Akhir: ";
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        /* Practice Section Styles */
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .difficulty-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .difficulty-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-text {
+            font-size: 1.25em;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1.05em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-group button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            min-width: 120px;
+        }
+
+        .input-group button:hover {
+            background: var(--primary-dark);
+        }
+
+        .input-group button:active {
+            transform: scale(0.98);
+        }
+
+        .feedback {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 1.05em;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-left: 4px solid var(--danger);
+        }
+
+        .feedback.hint {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid var(--warning);
+        }
+
+        .hint-solution {
+            background: #fef9e7;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 3px solid var(--warning);
+        }
+
+        .score-counter {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hint-btn, .reset-btn, .next-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .hint-btn:hover {
+            background: var(--warning);
+            color: white;
+        }
+
+        .reset-btn {
+            color: var(--text-light);
+            border-color: var(--border);
+        }
+
+        .reset-btn:hover {
+            background: var(--background);
+            color: var(--text-dark);
+        }
+
+        .next-btn {
+            color: var(--secondary);
+            border-color: var(--secondary);
+        }
+
+        .next-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Reference Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* SVG Diagram Styles */
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: left;
+                padding: 12px 16px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .example-card {
+                padding: 20px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input,
+            .input-group button {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button {
+                width: 100%;
+            }
+
+            .objective-list {
+                grid-template-columns: 1fr;
+            }
+
+            .difficulty-selector {
+                flex-direction: column;
+            }
+
+            .difficulty-btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.95em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .subsection-title {
+            font-size: 1.4em;
+            color: var(--primary);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📐 Trigonometric Ratios - Interactive Learning</h1>
+        <p>Daripada Teorem Pythagoras kepada Nisbah Trigonometri</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('introduction')">Pengenalan</button>
+            <button class="tab-button" onclick="switchTab('theory')">Asas Teori</button>
+            <button class="tab-button" onclick="switchTab('examples')">Contoh Penyelesaian</button>
+            <button class="tab-button" onclick="switchTab('practice')">Latihan Interaktif</button>
+            <button class="tab-button" onclick="switchTab('reference')">Rujukan Pantas</button>
+        </div>
+
+        <!-- INTRODUCTION TAB -->
+        <div id="introduction" class="tab-content active">
+            <h2 class="section-title">🎯 Pembelajaran Objektif</h2>
+            <div class="objective-list">
+                <div class="objective-item">Memahami hubungan antara Teorem Pythagoras dan nisbah trigonometri dalam segitiga bersudut tegak</div>
+                <div class="objective-item">Menyelesaikan masalah menggunakan nisbah sin, cos, dan tan dengan betul</div>
+                <div class="objective-item">Mengaplikasikan pengetahuan trigonometri kepada situasi kehidupan sebenar (pembinaan, navigasi, sains)</div>
+                <div class="objective-item">Membuat keputusan tentang nisbah yang paling sesuai untuk setiap masalah yang diberi</div>
+                <div class="objective-item">Menganalisis dan mengesahkan jawapan menggunakan kaedah alternatif atau kalkulator saintifik</div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 40px;">📖 Pengenalan Konsep</h2>
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                Trigonometri adalah cabang matematik yang mengkaji hubungan antara sudut dan sisi dalam segitiga.
+                Dalam kursus ini, kita akan bermula dengan <strong>Teorem Pythagoras</strong> sebagai asas, kemudian berkembang
+                kepada tiga nisbah trigonometri utama: <strong>sinus (sin), kosinus (cos), dan tangen (tan)</strong>.
+                <br><br>
+                Nisbah-nisbah ini sangat berguna dalam situasi sebenar seperti:
+            </p>
+            <ul style="font-size: 1.05em; margin: 15px 0 20px 30px;">
+                <li>Mengira ketinggian bangunan atau pohon</li>
+                <li>Merancang cerun atau landasan (engineering)</li>
+                <li>Navigasi dan pemetaan</li>
+                <li>Analisis gelombang dalam fizik</li>
+            </ul>
+        </div>
+
+        <!-- THEORY TAB -->
+        <div id="theory" class="tab-content">
+            <h2 class="section-title">📚 Asas Teori</h2>
+
+            <h3 class="subsection-title">1. Teorem Pythagoras (Asas Permulaan)</h3>
+            <p style="font-size: 1.05em; margin-bottom: 15px;">
+                Dalam mana-mana segitiga bersudut tegak, kuasa dua hipotenus sama dengan jumlah kuasa dua kedua-dua sisi yang lain:
+            </p>
+            <div class="formula-box">
+                <h3>Teorem Pythagoras</h3>
+                <div class="formula-item">
+                    <div class="formula-label">Bentuk Asas / Basic Form:</div>
+                    <div class="formula-content">a² + b² = c²</div>
+                </div>
+                <div class="formula-item">
+                    <div class="formula-label">Contoh Kehidupan Nyata:</div>
+                    <div class="formula-content">Tangga berlength 5m sandar ke dinding. Jarak dari dinding ke tapak tangga 3m. Ketinggian yang dicapai = √(5² - 3²) = √(25 - 9) = 4m</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">2. Segitiga Bersudut Tegak - Bahagian-Bahagian</h3>
+            <p style="font-size: 1.05em; margin-bottom: 15px;">
+                Dalam segitiga bersudut tegak, kita mempunyai tiga sisi dengan nama khusus:
+            </p>
+            <div class="diagram-container">
+                <svg viewBox="0 0 400 350" width="300" height="260">
+                    <!-- Triangle -->
+                    <polygon points="50,250 350,250 350,50" fill="#e0e7ff" stroke="#6366f1" stroke-width="3"/>
+
+                    <!-- Right angle indicator -->
+                    <rect x="330" y="230" width="20" height="20" fill="none" stroke="#6366f1" stroke-width="2"/>
+
+                    <!-- Labels for sides -->
+                    <text x="200" y="290" font-size="18" font-weight="bold" fill="#1f2937" text-anchor="middle">
+                        Asas / Base (b)
+                    </text>
+                    <text x="370" y="150" font-size="18" font-weight="bold" fill="#1f2937" text-anchor="start">
+                        Tinggi / Height (a)
+                    </text>
+                    <text x="190" y="130" font-size="18" font-weight="bold" fill="#ef4444" text-anchor="middle">
+                        Hipotenus (c)
+                    </text>
+
+                    <!-- Angle label -->
+                    <text x="80" y="240" font-size="16" fill="#764ba2" font-weight="bold">θ</text>
+
+                    <!-- Length annotations -->
+                    <text x="200" y="320" font-size="14" fill="#6b7280">a = sisi bertentangan / opposite</text>
+                    <text x="200" y="335" font-size="14" fill="#6b7280">b = sisi bersebelahan / adjacent</text>
+                    <text x="200" y="350" font-size="14" fill="#6b7280">c = hipotenus / hypotenuse</text>
+                </svg>
+            </div>
+
+            <h3 class="subsection-title">3. Nisbah Trigonometri Utama</h3>
+            <div class="formula-box">
+                <h3>Tiga Nisbah Trigonometri</h3>
+                <div class="formula-item">
+                    <div class="formula-label">sin(θ) = Sinus</div>
+                    <div class="formula-content">sin(θ) = Sisi Bertentangan / Hipotenus = a / c</div>
+                </div>
+                <div class="formula-item">
+                    <div class="formula-label">cos(θ) = Kosinus</div>
+                    <div class="formula-content">cos(θ) = Sisi Bersebelahan / Hipotenus = b / c</div>
+                </div>
+                <div class="formula-item">
+                    <div class="formula-label">tan(θ) = Tangen</div>
+                    <div class="formula-content">tan(θ) = Sisi Bertentangan / Sisi Bersebelahan = a / b</div>
+                </div>
+                <div class="formula-item" style="background: #fef3c7; border-left-color: #f59e0b; margin-top: 15px;">
+                    <div class="formula-label">📌 Ingatan Mudah: SOH-CAH-TOA</div>
+                    <div class="formula-content">
+                        <strong>S</strong>in = <strong>O</strong>pposite/Hypotenuse |
+                        <strong>C</strong>os = <strong>A</strong>djacent/Hypotenuse |
+                        <strong>T</strong>an = <strong>O</strong>pposite/<strong>A</strong>djacent
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">4. Mencari Sudut atau Sisi</h3>
+            <p style="font-size: 1.05em; margin: 15px 0;">Kami boleh menggunakan songsangan nisbah trigonometri:</p>
+            <div class="formula-box">
+                <div class="formula-item">
+                    <div class="formula-label">Mencari Sudut (inverse/songsangan):</div>
+                    <div class="formula-content">
+                        θ = sin⁻¹(a/c) atau θ = arcsin(a/c)<br>
+                        θ = cos⁻¹(b/c) atau θ = arccos(b/c)<br>
+                        θ = tan⁻¹(a/b) atau θ = arctan(a/b)
+                    </div>
+                </div>
+                <div class="formula-item">
+                    <div class="formula-label">Mencari Sisi (rearrange formula):</div>
+                    <div class="formula-content">
+                        a = c × sin(θ)<br>
+                        b = c × cos(θ)<br>
+                        a = b × tan(θ)
+                    </div>
+                </div>
+            </div>
+
+            <div class="error-box">
+                <h4>⚠️ Kesilapan Biasa Pelajar</h4>
+                <ul>
+                    <li>Mencampur sisi bertentangan dan bersebelahan. Ingat: <strong>Bertentangan</strong> adalah sisi yang berhadapan dengan sudut θ</li>
+                    <li>Lupa menukar kalkulator ke mode <strong>DEGREE</strong> (bukan radian). Kontrol: sin(30°) = 0.5</li>
+                    <li>Salah menggunakan nisbah. Jika diberi sudut dan hipotenus, gunakan <strong>SIN</strong> atau <strong>COS</strong>, bukan TAN</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- EXAMPLES TAB -->
+        <div id="examples" class="tab-content">
+            <h2 class="section-title">📝 Contoh Penyelesaian Lengkap</h2>
+
+            <!-- MUDAH Example -->
+            <div class="example-card">
+                <span class="difficulty-badge mudah">Mudah / Easy</span>
+                <h3>📌 Contoh 1: Mencari Sisi Dalam Segitiga Bersudut Tegak</h3>
+
+                <p style="margin-bottom: 15px;"><strong>Konteks Kehidupan Nyata:</strong> Seorang tukang kayu mahu membuat cerun untuk kerusi roda. Panjang cerun (hipotenus) adalah 4 meter, dan sudut cerun dengan tanah adalah 30°. Berapakah ketinggian cerun tersebut?</p>
+
+                <p style="margin-bottom: 15px;"><strong>Soalan:</strong> Dalam segitiga bersudut tegak, hipotenus (c) = 4 m dan sudut θ = 30°. Cari sisi bertentangan (a).</p>
+
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #0369a1;">Penyelesaian (Jalan Kerja):</strong>
+
+                    <div class="solution-step">
+                        <span class="step-number">1</span>
+                        <strong>Kenal Pasti Maklumat:</strong><br>
+                        • Hipotenus (c) = 4 m<br>
+                        • Sudut θ = 30°<br>
+                        • Cari: Sisi bertentangan (a) = ?
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">2</span>
+                        <strong>Pilih Nisbah yang Tepat:</strong><br>
+                        Kami mempunyai hipotenus dan ingin mencari sisi bertentangan, jadi gunakan: <strong>sin(θ) = a/c</strong>
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">3</span>
+                        <strong>Susun Semula Formula:</strong><br>
+                        a = c × sin(θ)<br>
+                        a = 4 × sin(30°)
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">4</span>
+                        <strong>Kirakan:</strong><br>
+                        Ingat: sin(30°) = 0.5<br>
+                        a = 4 × 0.5 = <strong style="color: #ef4444;">2 m</strong>
+                    </div>
+                </div>
+
+                <div class="answer-box">2 m</div>
+
+                <p style="margin-top: 15px; color: #6b7280;"><strong>Pengesahan:</strong> Menggunakan Teorem Pythagoras: 2² + b² = 4² → b² = 16 - 4 = 12 → b ≈ 3.46 m ✓</p>
+            </div>
+
+            <!-- SEDERHANA Example -->
+            <div class="example-card">
+                <span class="difficulty-badge sederhana">Sederhana / Medium</span>
+                <h3>📌 Contoh 2: Mencari Sudut Menggunakan Nisbah Songsang</h3>
+
+                <p style="margin-bottom: 15px;"><strong>Konteks Kehidupan Nyata:</strong> Sebuah dron mengambil foto dari udara. Jarak mendatar dari dron ke rumah adalah 30 m, dan jarak tegak (tinggi dron) adalah 20 m. Berapakah sudut penelusuran kamera?</p>
+
+                <p style="margin-bottom: 15px;"><strong>Soalan:</strong> Dalam segitiga bersudut tegak, sisi bersebelahan (b) = 30 m dan sisi bertentangan (a) = 20 m. Cari sudut θ.</p>
+
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #0369a1;">Penyelesaian (Jalan Kerja):</strong>
+
+                    <div class="solution-step">
+                        <span class="step-number">1</span>
+                        <strong>Kenal Pasti Maklumat:</strong><br>
+                        • Sisi bertentangan (a) = 20 m<br>
+                        • Sisi bersebelahan (b) = 30 m<br>
+                        • Cari: Sudut θ = ?
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">2</span>
+                        <strong>Pilih Nisbah yang Tepat:</strong><br>
+                        Kami mempunyai bertentangan dan bersebelahan, jadi gunakan: <strong>tan(θ) = a/b</strong>
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">3</span>
+                        <strong>Gunakan Nisbah Songsang:</strong><br>
+                        θ = tan⁻¹(a/b)<br>
+                        θ = tan⁻¹(20/30)<br>
+                        θ = tan⁻¹(0.667)
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">4</span>
+                        <strong>Kirakan (Gunakan Kalkulator):</strong><br>
+                        θ = <strong style="color: #ef4444;">33.7°</strong> (atau 33°42')
+                    </div>
+                </div>
+
+                <div class="answer-box">33.7°</div>
+
+                <p style="margin-top: 15px; color: #6b7280;"><strong>Pengesahan Alternatif:</strong> Menggunakan sin: Hipotenus = √(20² + 30²) = √1300 ≈ 36.06 m. Maka sin(θ) = 20/36.06 ≈ 0.555 → θ ≈ 33.7° ✓</p>
+            </div>
+
+            <!-- MENCABAR Example -->
+            <div class="example-card">
+                <span class="difficulty-badge mencabar">Mencabar / Challenge</span>
+                <h3>📌 Contoh 3: Masalah Aplikasi Dua Langkah</h3>
+
+                <p style="margin-bottom: 15px;"><strong>Konteks Kehidupan Nyata:</strong> Seorang pemandu kapal melihat sebuah mercu tanda dari dua lokasi. Dari lokasi pertama, sudut penelusuran ke atas adalah 20°. Selepas bergerak 100 m lebih dekat, sudut menjadi 35°. Berapakah ketinggian mercu tanda?</p>
+
+                <p style="margin-bottom: 15px;"><strong>Soalan (Ringkas):</strong> Cari ketinggian mercu tanda jika:
+                <br>• Dari titik A: tan(20°) = h/x
+                <br>• Dari titik B (100 m lebih dekat): tan(35°) = h/(x-100)
+                </p>
+
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #0369a1;">Penyelesaian (Jalan Kerja):</strong>
+
+                    <div class="solution-step">
+                        <span class="step-number">1</span>
+                        <strong>Bentuk Dua Persamaan dari Maklumat:</strong><br>
+                        Dari lokasi A: h = x × tan(20°) ... (1)<br>
+                        Dari lokasi B: h = (x - 100) × tan(35°) ... (2)
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">2</span>
+                        <strong>Samakan Kedua Persamaan (kerana h sama):</strong><br>
+                        x × tan(20°) = (x - 100) × tan(35°)
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">3</span>
+                        <strong>Gantikan Nilai Trigonometri:</strong><br>
+                        x × 0.364 = (x - 100) × 0.700<br>
+                        0.364x = 0.700x - 70<br>
+                        -0.336x = -70<br>
+                        x = 70 / 0.336 ≈ <strong>208.3 m</strong>
+                    </div>
+
+                    <div class="solution-step">
+                        <span class="step-number">4</span>
+                        <strong>Cari Ketinggian Mercu Tanda:</strong><br>
+                        h = x × tan(20°)<br>
+                        h = 208.3 × 0.364<br>
+                        h = <strong style="color: #ef4444;">75.8 m</strong>
+                    </div>
+                </div>
+
+                <div class="answer-box">75.8 m</div>
+
+                <p style="margin-top: 15px; color: #6b7280;"><strong>Pengesahan:</strong> Dari lokasi B: h = (208.3 - 100) × tan(35°) = 108.3 × 0.700 = 75.8 m ✓</p>
+            </div>
+        </div>
+
+        <!-- PRACTICE TAB -->
+        <div id="practice" class="tab-content">
+            <h2 class="section-title">🎯 Latihan Interaktif</h2>
+
+            <div class="score-counter">
+                <span class="icon">📊</span> Skor: <span id="scoreCount">0</span> / <span id="totalCount">0</span>
+            </div>
+
+            <p style="font-size: 1.05em; margin-bottom: 20px; color: #6b7280;">
+                Pilih tahap kesukaran dan jawab soalan. Masukkan jawapan anda dan tekan "Semak Jawapan" atau tekan Enter.
+            </p>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" onclick="selectDifficulty('mudah')">Mudah</button>
+                <button class="difficulty-btn" onclick="selectDifficulty('sederhana')">Sederhana</button>
+                <button class="difficulty-btn" onclick="selectDifficulty('mencabar')">Mencabar</button>
+            </div>
+
+            <div class="question-card">
+                <div id="questionDisplay"></div>
+                <div class="input-group">
+                    <input type="text" id="answerInput" placeholder="Masukkan jawapan di sini (cth: 3.5, 45, 2/3, 3+4i)" onkeypress="handleKeyPress(event)">
+                    <button onclick="checkAnswer()">Semak Jawapan</button>
+                </div>
+                <div id="feedbackArea"></div>
+                <div class="button-group">
+                    <button class="hint-btn" onclick="showHint()">💡 Tunjuk Penyelesaian</button>
+                    <button class="next-btn" onclick="generateQuestion()">➡️ Soalan Seterusnya</button>
+                    <button class="reset-btn" onclick="resetPractice()">🔄 Mulai Semula</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REFERENCE TAB -->
+        <div id="reference" class="tab-content">
+            <h2 class="section-title">📋 Rujukan Pantas</h2>
+
+            <h3 class="subsection-title">1. Jadual Nisbah Trigonometri Asas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sudut (Degrees)</th>
+                        <th>sin(θ)</th>
+                        <th>cos(θ)</th>
+                        <th>tan(θ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0°</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>30°</td>
+                        <td>0.5</td>
+                        <td>0.866</td>
+                        <td>0.577</td>
+                    </tr>
+                    <tr>
+                        <td>45°</td>
+                        <td>0.707</td>
+                        <td>0.707</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>60°</td>
+                        <td>0.866</td>
+                        <td>0.5</td>
+                        <td>1.732</td>
+                    </tr>
+                    <tr>
+                        <td>90°</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>Undefined</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="subsection-title">2. Panduan Langkah demi Langkah - Menyelesaikan Masalah Trigonometri</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Langkah</th>
+                        <th>Tindakan</th>
+                        <th>Contoh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>Baca soalan dengan teliti. Kenal pasti: (a) apa yang diberi (given), (b) apa yang dicari (find)</td>
+                        <td>"Diberi: c=10m, θ=25°. Cari: a"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>Lukis segitiga bersudut tegak. Labelkan sisi dan sudut yang diketahui dan yang dicari</td>
+                        <td>Tanda hipotenus, bertentangan, bersebelahan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>Tentukan nisbah mana yang melibatkan sisi/sudut yang diberi dan yang dicari</td>
+                        <td>Gunakan: SOH-CAH-TOA untuk memilih sin, cos, atau tan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td>Tulis formula yang dipilih, kemudian susun semula untuk mencari yang tidak diketahui</td>
+                        <td>sin(θ) = a/c → a = c × sin(θ)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td>Gantikan nilai dan kirakan menggunakan kalkulator (pastikan mode DEGREE)</td>
+                        <td>a = 10 × sin(25°) = 10 × 0.423 = 4.23 m</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6</strong></td>
+                        <td>Sertakan unit dalam jawapan akhir. Semak dengan kaedah lain jika boleh</td>
+                        <td>Jawapan: 4.23 m (bukan 4.23)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="subsection-title">3. Pemilihan Nisbah Trigonometri - Panduan Cepat</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Maklumat Diberi</th>
+                        <th>Cari</th>
+                        <th>Nisbah Gunakan</th>
+                        <th>Formula</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hipotenus + Sudut</td>
+                        <td>Sisi Bertentangan</td>
+                        <td><strong>SIN</strong></td>
+                        <td>a = c × sin(θ)</td>
+                    </tr>
+                    <tr>
+                        <td>Hipotenus + Sudut</td>
+                        <td>Sisi Bersebelahan</td>
+                        <td><strong>COS</strong></td>
+                        <td>b = c × cos(θ)</td>
+                    </tr>
+                    <tr>
+                        <td>Bertentangan + Bersebelahan</td>
+                        <td>Sudut</td>
+                        <td><strong>TAN⁻¹</strong></td>
+                        <td>θ = tan⁻¹(a/b)</td>
+                    </tr>
+                    <tr>
+                        <td>Bertentangan + Hipotenus</td>
+                        <td>Sudut</td>
+                        <td><strong>SIN⁻¹</strong></td>
+                        <td>θ = sin⁻¹(a/c)</td>
+                    </tr>
+                    <tr>
+                        <td>Bersebelahan + Hipotenus</td>
+                        <td>Sudut</td>
+                        <td><strong>COS⁻¹</strong></td>
+                        <td>θ = cos⁻¹(b/c)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="subsection-title">4. 🔑 Tip Penting untuk Pemeriksaan</h3>
+            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <ul style="font-size: 1.05em; line-height: 1.8;">
+                    <li>✅ <strong>Sentiasa tetapkan kalkulator ke mode DEGREE</strong> (bukan Radian). Ujian: sin(30°) mestilah = 0.5</li>
+                    <li>✅ <strong>Terang-terangan labelkan</strong> segitiga anda dengan a, b, c dan θ. Ini mengurangkan kesalahan</li>
+                    <li>✅ <strong>Semak unit jawapan</strong>. Jika soalan dalam meter, jawapan mesti dalam meter (atau darjah untuk sudut)</li>
+                    <li>✅ <strong>Gunakan dua kaedah berbeza</strong> untuk mengesahkan jawapan anda, terutamanya dalam peperiksaan</li>
+                    <li>✅ <strong>Bulatkan dengan bijak</strong>. Jangan bulatkan di tengah-tengah pengiraan; simpan tempat perpuluhan sehingga akhir</li>
+                    <li>✅ <strong>Patuhi</strong> BODMAS/PEMDAS dalam pengiraan: Kurungan, Indeks, Bahagi, Darab, Tambah, Tolak</li>
+                </ul>
+            </div>
+
+            <h3 class="subsection-title">5. Penghubung Penting: Teorem Pythagoras ↔ Trigonometri</h3>
+            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="font-size: 1.05em; margin-bottom: 15px;">
+                    <strong>Mengapa Teorem Pythagoras Penting?</strong> Ia membantu kami mencari sisi ketiga apabila dua sisi diketahui.
+                </p>
+                <p style="font-size: 1.05em; margin-bottom: 15px;">
+                    Contoh: Jika a = 3 dan b = 4, maka c = √(9 + 16) = √25 = 5
+                </p>
+                <p style="font-size: 1.05em;">
+                    <strong>Selepas itu, gunakan nisbah trigonometri</strong> untuk mencari sudut atau sisi yang lain.
+                    Cth: sin(θ) = 3/5, maka θ = sin⁻¹(0.6) ≈ 36.87°
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ TAB SWITCHING ============
+        function switchTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'practice') {
+                if (document.getElementById('questionDisplay').innerHTML === '') {
+                    generateQuestion();
+                }
+            }
+        }
+
+        // ============ PRACTICE SECTION LOGIC ============
+        let currentQuestion = null;
+        let score = 0;
+        let total = 0;
+        let hintShown = false;
+        let currentDifficulty = 'mudah';
+
+        const questionBank = {
+            mudah: [
+                {
+                    text: "Dalam segitiga bersudut tegak, hipotenus = 10 m dan sudut θ = 30°. Cari sisi bertentangan (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (10 * Math.sin(30 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan sin(θ) = bertentangan/hipotenus → bertentangan = 10 × sin(30°) = 10 × 0.5 = 5.0 m"
+                },
+                {
+                    text: "Cari sisi bersebelahan jika hipotenus = 8 m dan sudut = 45° (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (8 * Math.cos(45 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan cos(θ) = bersebelahan/hipotenus → bersebelahan = 8 × cos(45°) = 8 × 0.707 ≈ 5.7 m"
+                },
+                {
+                    text: "Dalam segitiga bersudut tegak, sisi bertentangan = 6 m, sisi bersebelahan = 8 m. Cari tan(θ) (bulatkan ke 2 tempat perpuluhan).",
+                    getAnswer: () => (6 / 8).toFixed(2),
+                    solution: "tan(θ) = bertentangan/bersebelahan = 6/8 = 0.75"
+                },
+                {
+                    text: "Hipotenus = 5 m, sudut = 60°. Cari sisi bertentangan (bulatkan ke 2 tempat perpuluhan).",
+                    getAnswer: () => (5 * Math.sin(60 * Math.PI / 180)).toFixed(2),
+                    solution: "bertentangan = 5 × sin(60°) = 5 × 0.866 ≈ 4.33 m"
+                },
+                {
+                    text: "Cari sudut jika bertentangan = 3 m dan hipotenus = 6 m. Jawapan dalam darjah (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (Math.asin(3/6) * 180 / Math.PI).toFixed(1),
+                    solution: "θ = sin⁻¹(3/6) = sin⁻¹(0.5) = 30.0°"
+                },
+                {
+                    text: "Sisi bersebelahan = 7 m, hipotenus = 10 m. Cari cos(θ) (bulatkan ke 2 tempat perpuluhan).",
+                    getAnswer: () => (7 / 10).toFixed(2),
+                    solution: "cos(θ) = bersebelahan/hipotenus = 7/10 = 0.70"
+                }
+            ],
+            sederhana: [
+                {
+                    text: "Seorang pelajar memerhatikan sudut ke atas puncak bangunan ialah 35°. Dia berdiri 50 m dari kaki bangunan. Cari ketinggian bangunan (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (50 * Math.tan(35 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan tan(θ) = ketinggian/jarak → ketinggian = 50 × tan(35°) = 50 × 0.700 ≈ 35.0 m"
+                },
+                {
+                    text: "Tangga sepanjang 6 m disandarkan ke dinding. Sudut antara tangga dan tanah adalah 60°. Berapakah ketinggian dinding yang dicapai (bulatkan ke 1 tempat perpuluhan)?",
+                    getAnswer: () => (6 * Math.sin(60 * Math.PI / 180)).toFixed(1),
+                    solution: "Ketinggian = 6 × sin(60°) = 6 × 0.866 ≈ 5.2 m"
+                },
+                {
+                    text: "Cari sudut jika bertentangan = 5 m dan bersebelahan = 12 m. Jawapan dalam darjah (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (Math.atan(5/12) * 180 / Math.PI).toFixed(1),
+                    solution: "θ = tan⁻¹(5/12) = tan⁻¹(0.417) ≈ 22.6°"
+                },
+                {
+                    text: "Sisi bertentangan = 8 m, sisi bersebelahan = 15 m. Cari hipotenus menggunakan Teorem Pythagoras, kemudian cari sin(θ) (bulatkan ke 3 tempat perpuluhan).",
+                    getAnswer: () => {
+                        const c = Math.sqrt(8*8 + 15*15);
+                        return (8 / c).toFixed(3);
+                    },
+                    solution: "Hipotenus = √(64 + 225) = √289 = 17 m. sin(θ) = 8/17 ≈ 0.471"
+                },
+                {
+                    text: "Dari jarak 100 m dari mercu tanda, sudut ke atas puncak adalah 28°. Cari ketinggian mercu tanda (bulatkan ke 0 tempat perpuluhan).",
+                    getAnswer: () => Math.round(100 * Math.tan(28 * Math.PI / 180)),
+                    solution: "Ketinggian = 100 × tan(28°) = 100 × 0.532 ≈ 53 m"
+                },
+                {
+                    text: "Hipotenus = 13 m, bertentangan = 5 m. Cari cos(θ) menggunakan Pythagoras, bulatkan ke 2 tempat perpuluhan.",
+                    getAnswer: () => {
+                        const b = Math.sqrt(13*13 - 5*5);
+                        return (b / 13).toFixed(2);
+                    },
+                    solution: "bersebelahan = √(169 - 25) = √144 = 12 m. cos(θ) = 12/13 ≈ 0.92"
+                }
+            ],
+            mencabar: [
+                {
+                    text: "Sebuah kapal melihat mercusuar dari dua sudut: 25° dari 200 m jauhnya, dan 40° selepas bergerak ke depan. Cari ketinggian mercusuar (bulatkan ke 1 tempat perpuluhan). [Petunjuk: h = d×tan(θ), gunakan dua persamaan]",
+                    getAnswer: () => {
+                        // h = 200*tan(25) = (200-x)*tan(40)
+                        // Solving: 200*tan(25) = (200-x)*tan(40)
+                        const tan25 = Math.tan(25 * Math.PI / 180);
+                        const tan40 = Math.tan(40 * Math.PI / 180);
+                        const x = (200 * tan40 - 200 * tan25) / (tan40);
+                        const h = x * tan25;
+                        return h.toFixed(1);
+                    },
+                    solution: "Bentuk persamaan: h = d₁×tan(25°) = (d₁-100)×tan(40°). Selesaikan untuk d₁, kemudian cari h. Jawapan ≈ 61.4 m"
+                },
+                {
+                    text: "Dua pemerhatian sudut: dari A sudut adalah 20°, dari B (300 m lebih dekat) sudut adalah 35°. Cari ketinggian objek (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => {
+                        const tan20 = Math.tan(20 * Math.PI / 180);
+                        const tan35 = Math.tan(35 * Math.PI / 180);
+                        const d = (300 * tan35) / (tan35 - tan20);
+                        const h = d * tan20;
+                        return h.toFixed(1);
+                    },
+                    solution: "Gunakan dua persamaan dengan dua pemboleh ubah (d dan h). Selesaikan sistem persamaan. Jawapan ≈ 119.5 m"
+                },
+                {
+                    text: "Dalam segitiga bersudut tegak, cari sudut jika sin(θ) = 0.6. Kemudian cari tan(θ) (bulatkan ke 3 tempat perpuluhan).",
+                    getAnswer: () => {
+                        // sin(θ) = 0.6, maka bertentangan = 3, hipotenus = 5
+                        // bersebelahan = 4, tan(θ) = 3/4 = 0.75
+                        return (0.6 / Math.sqrt(1 - 0.6*0.6)).toFixed(3);
+                    },
+                    solution: "Jika sin(θ) = 0.6 = 3/5, maka dengan Pythagoras: cos²(θ) = 1 - 0.36 = 0.64, cos(θ) = 0.8. tan(θ) = sin(θ)/cos(θ) = 0.6/0.8 = 0.750"
+                }
+            ]
+        };
+
+        function generateQuestion() {
+            hintShown = false;
+            const questions = questionBank[currentDifficulty];
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            total++;
+
+            document.getElementById('questionDisplay').innerHTML = `
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 6px; border-left: 4px solid #0284c7;">
+                    <p style="font-size: 1.2em; color: #1f2937; margin-bottom: 10px;">${currentQuestion.text}</p>
+                    <small style="color: #6b7280;">Tahap: <strong>${currentDifficulty.toUpperCase()}</strong></small>
+                </div>
+            `;
+
+            document.getElementById('feedbackArea').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+            document.getElementById('totalCount').textContent = total;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            if (!userAnswer) {
+                showFeedback('Sila masukkan jawapan.', 'incorrect');
+                return;
+            }
+
+            const correctAnswer = currentQuestion.getAnswer();
+            const isCorrect = checkAnswerMatch(userAnswer, correctAnswer);
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('scoreCount').textContent = score;
+                showFeedback(`🎉 Betul! Jawapan: ${correctAnswer}`, 'correct');
+                setTimeout(generateQuestion, 1500);
+            } else {
+                showFeedback(`❌ Salah! Jawapan betul: ${correctAnswer}`, 'incorrect');
+            }
+        }
+
+        function checkAnswerMatch(userAnswer, correctAnswer) {
+            const tolerance = 0.02;
+            const userNum = parseFloat(userAnswer.replace(/[^\d.-]/g, ''));
+            const correctNum = parseFloat(correctAnswer);
+
+            if (isNaN(userNum)) return false;
+            return Math.abs(userNum - correctNum) <= tolerance;
+        }
+
+        function showHint() {
+            if (!hintShown) {
+                hintShown = true;
+                const feedbackArea = document.getElementById('feedbackArea');
+                const hintDiv = document.createElement('div');
+                hintDiv.className = 'feedback show hint';
+                hintDiv.innerHTML = `
+                    <strong>💡 Petunjuk Penyelesaian:</strong>
+                    <div class="hint-solution">${currentQuestion.solution}</div>
+                `;
+                feedbackArea.appendChild(hintDiv);
+            }
+        }
+
+        function showFeedback(message, type) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `<div class="feedback show ${type}">${message}</div>`;
+        }
+
+        function resetPractice() {
+            score = 0;
+            total = 0;
+            hintShown = false;
+            document.getElementById('scoreCount').textContent = score;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('questionDisplay').innerHTML = '';
+            document.getElementById('feedbackArea').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            generateQuestion();
+        }
+
+        function selectDifficulty(level) {
+            currentDifficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetPractice();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+    </script>
+</body>
+</html>
