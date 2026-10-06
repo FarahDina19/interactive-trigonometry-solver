@@ -1223,7 +1223,11 @@ const ObliqueTriangleSolver = () => {
               <p className="mt-2 text-slate-700">
                 Follow the plan, enter each answer, and check your work before moving on.
               </p>
-              
+
+              <div className="mx-auto mt-4 max-w-sm">
+                <TriangleDiagram {...diagramLabels} />
+              </div>
+
               {/* Navigation Controls (Section G) */}
               {exerciseStep > 0 && (
                 <div className="mt-4 flex flex-wrap justify-center gap-2">
@@ -1288,10 +1292,6 @@ const ObliqueTriangleSolver = () => {
                     <p className="text-sm font-bold text-slate-700">Step {exerciseStep} of 5</p>
                   </div>
                   <ExerciseProgress currentStep={exerciseStep} onStepSelect={goToStep} />
-                </div>
-
-                <div className="mx-auto max-w-sm">
-                  <TriangleDiagram {...diagramLabels} />
                 </div>
 
                 {exerciseStep >= 1 && (
