@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigonometric Ratios - Interactive Learning (With Data Collection)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --background: #f9fafb;
+            --surface: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Student Info Section */
+        .student-info-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--warning);
+        }
+
+        .student-info-panel h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-field label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .info-field input, .info-field select {
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .info-field input:focus, .info-field select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .data-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .data-btn {
+            padding: 10px 16px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .data-btn:hover {
+            background: var(--background);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .data-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .data-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .data-btn.danger {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .data-btn.danger:hover {
+            background: #fee2e2;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1em;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .difficulty-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .difficulty-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-text {
+            font-size: 1.25em;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1.05em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-group button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            min-width: 120px;
+        }
+
+        .input-group button:hover {
+            background: var(--primary-dark);
+        }
+
+        .feedback {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 1.05em;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-left: 4px solid var(--danger);
+        }
+
+        .score-counter {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hint-btn, .reset-btn, .next-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .hint-btn:hover {
+            background: var(--warning);
+            color: white;
+        }
+
+        .reset-btn {
+            color: var(--text-light);
+            border-color: var(--border);
+        }
+
+        .reset-btn:hover {
+            background: var(--background);
+        }
+
+        .next-btn {
+            color: var(--secondary);
+            border-color: var(--secondary);
+        }
+
+        .next-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Data Log Section */
+        .data-log-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-log-section h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .data-table-wrapper {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .status-hint {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .no-data-message {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-content h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .modal-btn-secondary {
+            background: var(--border);
+            color: var(--text-dark);
+        }
+
+        .modal-btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-buttons {
+                flex-direction: column;
+            }
+
+            .data-btn {
+                width: 100%;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: left;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input,
+            .input-group button {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📐 Trigonometric Ratios - Interactive Learning</h1>
+        <p>Dengan Pengumpulan Data Automatik / With Automatic Data Collection</p>
+    </div>
+
+    <div class="container">
+        <!-- Student Information Panel -->
+        <div class="student-info-panel">
+            <h3>👤 Maklumat Pelajar / Student Information</h3>
+            <div class="info-grid">
+                <div class="info-field">
+                    <label for="studentName">Nama Pelajar / Student Name *</label>
+                    <input type="text" id="studentName" placeholder="Nama lengkap / Full name" required>
+                </div>
+                <div class="info-field">
+                    <label for="studentID">ID/Matric No. *</label>
+                    <input type="text" id="studentID" placeholder="e.g., A2023001" required>
+                </div>
+                <div class="info-field">
+                    <label for="studentClass">Kelas / Class</label>
+                    <input type="text" id="studentClass" placeholder="e.g., DUM10092-01">
+                </div>
+                <div class="info-field">
+                    <label for="googleSheetURL">🔗 Google Sheet URL (Optional)</label>
+                    <input type="text" id="googleSheetURL" placeholder="https://script.google.com/macros/s/...">
+                </div>
+            </div>
+            <div class="data-buttons">
+                <button class="data-btn primary" onclick="confirmSession()">✅ Mulai Sesi / Start Session</button>
+                <button class="data-btn" onclick="exportToCSV()">📥 Muat Turun CSV / Download CSV</button>
+                <button class="data-btn" onclick="sendToGoogleSheets()">☁️ Hantar ke Google Sheets</button>
+                <button class="data-btn" onclick="viewResponseData()">📊 Lihat Data / View Data</button>
+                <button class="data-btn danger" onclick="clearAllData()">🗑️ Padam Semua / Clear All</button>
+            </div>
+            <div class="success-message" id="successMessage"></div>
+        </div>
+
+        <!-- Main Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('practice')">Latihan Interaktif</button>
+            <button class="tab-button" onclick="switchTab('responses')">Lihat Jawapan Pelajar</button>
+        </div>
+
+        <!-- PRACTICE TAB -->
+        <div id="practice" class="tab-content active">
+            <div class="score-counter">
+                <span>📊 Skor: <span id="scoreCount">0</span> / <span id="totalCount">0</span> | Pelajar: <span id="currentStudent">Belum login</span></span>
+            </div>
+
+            <p style="font-size: 1.05em; margin-bottom: 20px; color: #6b7280;">
+                Pilih tahap kesukaran dan jawab soalan. Semua jawapan akan disimpan secara automatik.
+            </p>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" onclick="selectDifficulty('mudah')">Mudah</button>
+                <button class="difficulty-btn" onclick="selectDifficulty('sederhana')">Sederhana</button>
+                <button class="difficulty-btn" onclick="selectDifficulty('mencabar')">Mencabar</button>
+            </div>
+
+            <div class="question-card">
+                <div id="questionDisplay"></div>
+                <div class="input-group">
+                    <input type="text" id="answerInput" placeholder="Masukkan jawapan di sini" onkeypress="handleKeyPress(event)">
+                    <button onclick="checkAnswer()">Semak Jawapan</button>
+                </div>
+                <div id="feedbackArea"></div>
+                <div class="button-group">
+                    <button class="hint-btn" onclick="showHint()">💡 Tunjuk Penyelesaian</button>
+                    <button class="next-btn" onclick="generateQuestion()">➡️ Soalan Seterusnya</button>
+                    <button class="reset-btn" onclick="resetPractice()">🔄 Mulai Semula</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESPONSES TAB -->
+        <div id="responses" class="tab-content">
+            <div class="data-log-section">
+                <h3>📊 Rekod Jawapan Pelajar / Student Response Log</h3>
+                <div class="data-table-wrapper">
+                    <table id="responseTable">
+                        <thead>
+                            <tr>
+                                <th>Masa / Time</th>
+                                <th>Soalan / Question</th>
+                                <th>Tahap / Level</th>
+                                <th>Jawapan Pelajar / Answer</th>
+                                <th>Jawapan Betul / Correct</th>
+                                <th>Status</th>
+                                <th>Gunakan Hint / Used Hint</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responseTableBody">
+                            <tr><td colspan="7" class="no-data-message">Tiada data / No data yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Session Confirmation -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <h3>✅ Sahkan Maklumat Pelajar</h3>
+            <p>Sila pastikan maklumat berikut adalah betul sebelum memulai:</p>
+            <div id="modalStudentInfo"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Batal / Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="startSession()">Mula Belajar / Start Learning</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ DATA COLLECTION ============
+        const STORAGE_KEY = 'trigonometry_responses';
+        const SESSION_KEY = 'trigonometry_session';
+
+        let currentSession = {
+            studentName: '',
+            studentID: '',
+            studentClass: '',
+            startTime: null,
+            responses: []
+        };
+
+        let currentQuestion = null;
+        let score = 0;
+        let total = 0;
+        let hintShown = false;
+        let currentDifficulty = 'mudah';
+        let sessionActive = false;
+
+        // Question Bank (same as before)
+        const questionBank = {
+            mudah: [
+                {
+                    text: "Dalam segitiga bersudut tegak, hipotenus = 10 m dan sudut θ = 30°. Cari sisi bertentangan (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (10 * Math.sin(30 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan sin(θ) = bertentangan/hipotenus → bertentangan = 10 × sin(30°) = 10 × 0.5 = 5.0 m"
+                },
+                {
+                    text: "Cari sisi bersebelahan jika hipotenus = 8 m dan sudut = 45° (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (8 * Math.cos(45 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan cos(θ) = bersebelahan/hipotenus → bersebelahan = 8 × cos(45°) = 8 × 0.707 ≈ 5.7 m"
+                },
+                {
+                    text: "Dalam segitiga bersudut tegak, sisi bertentangan = 6 m, sisi bersebelahan = 8 m. Cari tan(θ) (bulatkan ke 2 tempat perpuluhan).",
+                    getAnswer: () => (6 / 8).toFixed(2),
+                    solution: "tan(θ) = bertentangan/bersebelahan = 6/8 = 0.75"
+                }
+            ],
+            sederhana: [
+                {
+                    text: "Seorang pelajar memerhatikan sudut ke atas puncak bangunan ialah 35°. Dia berdiri 50 m dari kaki bangunan. Cari ketinggian bangunan (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (50 * Math.tan(35 * Math.PI / 180)).toFixed(1),
+                    solution: "Gunakan tan(θ) = ketinggian/jarak → ketinggian = 50 × tan(35°) = 50 × 0.700 ≈ 35.0 m"
+                },
+                {
+                    text: "Tangga sepanjang 6 m disandarkan ke dinding. Sudut antara tangga dan tanah adalah 60°. Berapakah ketinggian dinding yang dicapai (bulatkan ke 1 tempat perpuluhan)?",
+                    getAnswer: () => (6 * Math.sin(60 * Math.PI / 180)).toFixed(1),
+                    solution: "Ketinggian = 6 × sin(60°) = 6 × 0.866 ≈ 5.2 m"
+                }
+            ],
+            mencabar: [
+                {
+                    text: "Cari sudut jika bertentangan = 5 m dan bersebelahan = 12 m. Jawapan dalam darjah (bulatkan ke 1 tempat perpuluhan).",
+                    getAnswer: () => (Math.atan(5/12) * 180 / Math.PI).toFixed(1),
+                    solution: "θ = tan⁻¹(5/12) = tan⁻¹(0.417) ≈ 22.6°"
+                }
+            ]
+        };
+
+        // ============ SESSION MANAGEMENT ============
+        function confirmSession() {
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentID = document.getElementById('studentID').value.trim();
+
+            if (!studentName || !studentID) {
+                alert('Sila isi Nama dan ID Pelajar');
+                return;
+            }
+
+            const studentClass = document.getElementById('studentClass').value.trim();
+            document.getElementById('modalStudentInfo').innerHTML = `
+                <p><strong>Nama:</strong> ${studentName}</p>
+                <p><strong>ID:</strong> ${studentID}</p>
+                <p><strong>Kelas:</strong> ${studentClass || 'N/A'}</p>
+            `;
+            document.getElementById('sessionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('sessionModal').classList.remove('show');
+        }
+
+        function startSession() {
+            closeModal();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentID = document.getElementById('studentID').value.trim();
+            const studentClass = document.getElementById('studentClass').value.trim();
+
+            currentSession = {
+                studentName: studentName,
+                studentID: studentID,
+                studentClass: studentClass,
+                startTime: new Date().toISOString(),
+                responses: []
+            };
+
+            sessionActive = true;
+            document.getElementById('currentStudent').textContent = `${studentName} (${studentID})`;
+            generateQuestion();
+
+            showSuccessMessage(`✅ Sesi dimulakan untuk ${studentName}`);
+        }
+
+        // ============ PRACTICE LOGIC ============
+        function generateQuestion() {
+            if (!sessionActive) {
+                alert('Sila mulai sesi terlebih dahulu');
+                return;
+            }
+
+            hintShown = false;
+            const questions = questionBank[currentDifficulty];
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            total++;
+
+            document.getElementById('questionDisplay').innerHTML = `
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 6px; border-left: 4px solid #0284c7;">
+                    <p style="font-size: 1.2em; color: #1f2937; margin-bottom: 10px;">${currentQuestion.text}</p>
+                    <small style="color: #6b7280;">Tahap: <strong>${currentDifficulty.toUpperCase()}</strong></small>
+                </div>
+            `;
+
+            document.getElementById('feedbackArea').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+            document.getElementById('totalCount').textContent = total;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            if (!userAnswer) {
+                showFeedback('Sila masukkan jawapan.', 'incorrect');
+                return;
+            }
+
+            const correctAnswer = currentQuestion.getAnswer();
+            const isCorrect = checkAnswerMatch(userAnswer, correctAnswer);
+
+            // Record the response
+            recordResponse({
+                questionText: currentQuestion.text,
+                difficulty: currentDifficulty,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect,
+                usedHint: hintShown,
+                timestamp: new Date().toLocaleString('ms-MY')
+            });
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('scoreCount').textContent = score;
+                showFeedback(`🎉 Betul! Jawapan: ${correctAnswer}`, 'correct');
+                setTimeout(generateQuestion, 1500);
+            } else {
+                showFeedback(`❌ Salah! Jawapan betul: ${correctAnswer}`, 'incorrect');
+            }
+        }
+
+        function checkAnswerMatch(userAnswer, correctAnswer) {
+            const tolerance = 0.02;
+            const userNum = parseFloat(userAnswer.replace(/[^\d.-]/g, ''));
+            const correctNum = parseFloat(correctAnswer);
+
+            if (isNaN(userNum)) return false;
+            return Math.abs(userNum - correctNum) <= tolerance;
+        }
+
+        function showHint() {
+            if (!hintShown) {
+                hintShown = true;
+                const feedbackArea = document.getElementById('feedbackArea');
+                const hintDiv = document.createElement('div');
+                hintDiv.className = 'feedback show';
+                hintDiv.style.background = '#fef3c7';
+                hintDiv.style.borderLeftColor = '#f59e0b';
+                hintDiv.innerHTML = `
+                    <strong>💡 Petunjuk Penyelesaian:</strong>
+                    <div style="margin-top: 10px; background: #fef9e7; padding: 10px; border-radius: 4px;">${currentQuestion.solution}</div>
+                `;
+                feedbackArea.appendChild(hintDiv);
+            }
+        }
+
+        function showFeedback(message, type) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `<div class="feedback show ${type}">${message}</div>`;
+        }
+
+        function resetPractice() {
+            score = 0;
+            total = 0;
+            hintShown = false;
+            document.getElementById('scoreCount').textContent = score;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('questionDisplay').innerHTML = '';
+            document.getElementById('feedbackArea').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            if (sessionActive) {
+                generateQuestion();
+            }
+        }
+
+        function selectDifficulty(level) {
+            currentDifficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetPractice();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        // ============ DATA RECORDING ============
+        function recordResponse(response) {
+            if (!sessionActive) return;
+
+            currentSession.responses.push(response);
+            saveSessionToStorage();
+            updateResponseTable();
+        }
+
+        function saveSessionToStorage() {
+            const allSessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const existingIndex = allSessions.findIndex(s => s.studentID === currentSession.studentID && s.startTime === currentSession.startTime);
+
+            if (existingIndex >= 0) {
+                allSessions[existingIndex] = currentSession;
+            } else {
+                allSessions.push(currentSession);
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allSessions));
+        }
+
+        function updateResponseTable() {
+            const tbody = document.getElementById('responseTableBody');
+            if (currentSession.responses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data-message">Tiada data / No data yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = currentSession.responses.map(response => `
+                <tr>
+                    <td>${response.timestamp}</td>
+                    <td>${response.questionText.substring(0, 40)}...</td>
+                    <td>${response.difficulty}</td>
+                    <td><strong>${response.userAnswer}</strong></td>
+                    <td>${response.correctAnswer}</td>
+                    <td><span class="status-badge ${response.isCorrect ? 'status-correct' : 'status-incorrect'}">${response.isCorrect ? '✓ Betul' : '✗ Salah'}</span></td>
+                    <td>${response.usedHint ? '✓ Ya' : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ============ DATA EXPORT ============
+        function exportToCSV() {
+            const allSessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (allSessions.length === 0 || currentSession.responses.length === 0) {
+                alert('Tiada data untuk dimuat turun');
+                return;
+            }
+
+            let csvContent = 'Nama,ID,Kelas,Masa,Soalan,Tahap,Jawapan Pelajar,Jawapan Betul,Status,Guna Hint\n';
+
+            currentSession.responses.forEach(response => {
+                const row = [
+                    currentSession.studentName,
+                    currentSession.studentID,
+                    currentSession.studentClass || '',
+                    response.timestamp,
+                    `"${response.questionText}"`,
+                    response.difficulty,
+                    response.userAnswer,
+                    response.correctAnswer,
+                    response.isCorrect ? 'Betul' : 'Salah',
+                    response.usedHint ? 'Ya' : 'Tidak'
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${currentSession.studentID}_trigonometry_responses.csv`;
+            link.click();
+
+            showSuccessMessage('✅ CSV telah dimuat turun');
+        }
+
+        function sendToGoogleSheets() {
+            const googleSheetURL = document.getElementById('googleSheetURL').value.trim();
+            if (!googleSheetURL) {
+                alert('Sila masukkan URL Google Sheet terlebih dahulu');
+                return;
+            }
+
+            if (currentSession.responses.length === 0) {
+                alert('Tiada data untuk dihantar');
+                return;
+            }
+
+            const payload = {
+                studentName: currentSession.studentName,
+                studentID: currentSession.studentID,
+                studentClass: currentSession.studentClass,
+                responses: currentSession.responses,
+                timestamp: new Date().toISOString()
+            };
+
+            fetch(googleSheetURL, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                mode: 'no-cors'
+            }).then(() => {
+                showSuccessMessage('✅ Data telah dihantar ke Google Sheets!');
+            }).catch(err => {
+                console.error('Error:', err);
+                alert('Ralat semasa menghantar. Pastikan URL adalah betul.');
+            });
+        }
+
+        function viewResponseData() {
+            switchTab('responses');
+            updateResponseTable();
+        }
+
+        function clearAllData() {
+            if (confirm('Adakah anda pasti ingin padam SEMUA data? Tindakan ini tidak boleh dibatalkan.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                currentSession.responses = [];
+                updateResponseTable();
+                showSuccessMessage('✅ Semua data telah dipadam');
+            }
+        }
+
+        function showSuccessMessage(message) {
+            const msgEl = document.getElementById('successMessage');
+            msgEl.textContent = message;
+            msgEl.classList.add('show');
+            setTimeout(() => msgEl.classList.remove('show'), 4000);
+        }
+
+        // ============ TAB SWITCHING ============
+        function switchTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
