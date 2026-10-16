@@ -60,11 +60,6 @@ const App = () => {
         <header className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight drop-shadow-lg">Interactive Trigonometry Solver</h1>
           <p className="text-white/80 text-lg">Step-by-Step Triangle Calculator, Lessons and Practice</p>
-          <p className="max-w-3xl mx-auto mt-3 text-white">
-            Solve triangles online with an interactive trigonometry solver for students and teachers.
-            Use the sine rule calculator and cosine rule calculator to find missing sides, then
-            explore sine, cosine and tangent through lessons, practice questions and worked solutions.
-          </p>
         </header>
 
         <nav className="flex justify-center mb-8">
@@ -89,6 +84,29 @@ const App = () => {
           <div key={activeTab} className="fade-in-content">
             {activeTab === 'outline' && (
               <>
+                <section aria-labelledby="learning-hub-heading" className="mb-8 rounded-2xl border border-purple-200 bg-gradient-to-br from-indigo-50 via-purple-50 to-fuchsia-100 p-6 sm:p-8 shadow-lg">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-purple-700">Your trigonometry lesson hub</p>
+                  <h2 id="learning-hub-heading" className="mt-2 text-2xl sm:text-3xl font-bold text-indigo-950">Explore, solve and practise trigonometry</h2>
+                  <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+                    Build confidence with an interactive trigonometry solver and triangle calculator for students and teachers.
+                    Use the sine rule and cosine rule to find missing sides and angles, then learn why each step works
+                    through lessons, practice questions and step-by-step solutions.
+                  </p>
+                  <div className="mt-6 grid gap-4 md:grid-cols-3">
+                    <div className="rounded-xl border border-indigo-200 bg-white/90 p-4">
+                      <h3 className="font-semibold text-indigo-800">Solve triangles</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">Open Oblique Triangle for guided sine rule, cosine rule and triangle area calculations.</p>
+                    </div>
+                    <div className="rounded-xl border border-purple-200 bg-white/90 p-4">
+                      <h3 className="font-semibold text-purple-800">Explore the lessons</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">Follow the curriculum below, then explore trigonometric ratios, interactive graphs and equations.</p>
+                    </div>
+                    <div className="rounded-xl border border-fuchsia-200 bg-white/90 p-4">
+                      <h3 className="font-semibold text-fuchsia-800">Practise step by step</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">Try practice questions and compare worked solutions to strengthen your problem-solving skills.</p>
+                    </div>
+                  </div>
+                </section>
                 <CurriculumOutline />
                 <section aria-labelledby="faq-heading" className="mt-8 rounded-2xl bg-white/90 p-6 sm:p-8 shadow-lg">
                   <h2 id="faq-heading" className="text-2xl font-bold mb-4">Common Trigonometry Questions</h2>
