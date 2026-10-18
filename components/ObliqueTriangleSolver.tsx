@@ -948,6 +948,35 @@ const ObliqueTriangleSolver = () => {
     },
   }[mode] as Record<'labelA' | 'labelB' | 'labelC' | 'sideA' | 'sideB' | 'sideC', DiagramValue>;
 
+  // Mirrors diagramLabels but keeps the values to solve for hidden, since this
+  // diagram accompanies the unanswered "Try It Yourself!" practice question.
+  const practiceDiagramLabels = {
+    sine: {
+      labelA: { text: `∠A = ${sineValues.angleA}°`, kind: 'given' },
+      labelB: { text: `∠B = ${sineValues.angleB}°`, kind: 'given' },
+      labelC: { text: '∠C', kind: 'unknown' },
+      sideA: { text: `a = ${sineValues.sideA}`, kind: 'given' },
+      sideB: { text: 'b', kind: 'unknown' },
+      sideC: { text: 'c', kind: 'unknown' },
+    },
+    cosine: {
+      labelA: { text: `∠A = ${cosineValues.angleA}°`, kind: 'given' },
+      labelB: { text: '∠B', kind: 'unknown' },
+      labelC: { text: '∠C', kind: 'unknown' },
+      sideA: { text: 'a', kind: 'unknown' },
+      sideB: { text: `b = ${cosineValues.sideB}`, kind: 'given' },
+      sideC: { text: `c = ${cosineValues.sideC}`, kind: 'given' },
+    },
+    area: {
+      labelA: { text: `∠A = ${areaValues.angleA}°`, kind: 'given' },
+      labelB: { text: '∠B', kind: 'unknown' },
+      labelC: { text: '∠C', kind: 'unknown' },
+      sideA: { text: 'a', kind: 'unknown' },
+      sideB: { text: `b = ${areaValues.sideB}`, kind: 'given' },
+      sideC: { text: `c = ${areaValues.sideC}`, kind: 'given' },
+    },
+  }[mode] as Record<'labelA' | 'labelB' | 'labelC' | 'sideA' | 'sideB' | 'sideC', DiagramValue>;
+
   const labellingFields = mode === 'sine'
     ? [
         { key: 'angleA', expected: 'a', className: 'left-[6%] top-[75%]' },
@@ -1433,6 +1462,9 @@ const ObliqueTriangleSolver = () => {
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-2xl" aria-hidden="true">🎯</span>
               <h3 id="try-it-heading" className="text-2xl font-extrabold text-slate-900">Try It Yourself!</h3>
+            </div>
+            <div className="mx-auto mt-5 max-w-sm">
+              <TriangleDiagram {...practiceDiagramLabels} />
             </div>
             <div className="mt-5 rounded-2xl bg-slate-50 px-5 py-6 text-center text-lg font-bold leading-relaxed text-blue-600 sm:text-xl">
               {practicePrompt}
