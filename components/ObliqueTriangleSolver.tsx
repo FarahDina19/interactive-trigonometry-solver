@@ -1575,6 +1575,11 @@ const ObliqueTriangleSolver = () => {
                 Follow the plan, enter each answer, and check your work before moving on.
               </p>
 
+              <div className="mx-auto mt-4 max-w-xl rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-center">
+                <span className="block text-xs font-extrabold uppercase tracking-wide text-blue-500">Question</span>
+                <p className="mt-1 text-base font-bold text-blue-800 sm:text-lg">{practicePrompt}</p>
+              </div>
+
               <div className="mx-auto mt-4 max-w-sm">
                 <TriangleDiagram {...diagramLabels} />
               </div>
