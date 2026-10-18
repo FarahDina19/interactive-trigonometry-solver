@@ -32,20 +32,19 @@ type PracticeLevel = 'easy' | 'medium' | 'hard';
 
 type HintLevel = 0 | 1 | 2 | 3;
 
-type DetailedQuestion = {
+// Which quantity a practice exercise asks the student to find.
+type FindTarget = 'angleC' | 'sideB' | 'sideC' | 'sideA' | 'area';
+
+type PracticeExercise = {
   id: string;
   title: string;
-  description: string;
-  context: string; // Real-world scenario
+  context: string; // One-line real-world scenario shown above the diagram
   difficulty: PracticeLevel;
   mode: ObliqueMode;
-  problemStatement: string; // Full problem text
-  givenValues: Record<string, string>; // e.g., { 'angleA': '40°', 'sideA': '8 cm' }
-  findWhat: string; // What to solve for
-  hints: string[];
-  solution: string; // Full worked solution
-  answer: number;
-  answerFormat: string; // e.g., 'cm', '°', 'cm²'
+  values: SineValues | CosineValues | AreaValues;
+  find: FindTarget;
+  unit: string; // base length unit, e.g. 'cm', 'm', 'km' (area unit is derived as unit + '²')
+  hints: string[]; // revealed one at a time, gentlest first
 };
 
 type Point = {
@@ -148,188 +147,285 @@ const questionBank: ObliqueQuestion[] = [
   },
 ];
 
-const detailedQuestionBank: DetailedQuestion[] = [
-  // EASY SINE RULE QUESTIONS
+// A graded bank of real-world practice exercises (easy -> hard) for each rule.
+// Prompts, diagrams, answers, and step-by-step solutions are all generated
+// from `values` + `find`, so the numbers are always internally consistent.
+const practiceExerciseBank: PracticeExercise[] = [
+  // ---- SINE RULE ----
   {
     id: 'sine-easy-1',
-    title: 'Navigation at Sea - Finding Distance',
-    description: 'A ship navigation problem using the Sine Rule',
-    context: 'A coast guard station observes a ship using two observation points. They need to find the distance to the ship using angles and a known baseline.',
+    title: 'Ship Spotted at Sea',
+    context: 'A coast guard crew at two lookout points tries to work out how far away a ship is.',
     difficulty: 'easy',
     mode: 'sine',
-    problemStatement: 'Two observation points A and B are 8 km apart on the coast. An observer at point A measures the angle to a ship at C as 40°. An observer at point B measures the angle at B as 70°. Find the distance from point A to the ship (side b).',
-    givenValues: { 'Side a (AB)': '8 km', 'Angle A': '40°', 'Angle B': '70°' },
-    findWhat: 'Distance b (from A to ship)',
+    values: { sideA: 8, angleA: 40, angleB: 70 },
+    find: 'sideB',
+    unit: 'km',
     hints: [
-      'This is an AAS (Angle-Angle-Side) case. The Sine Rule can find the unknown side.',
-      'First find angle C: 180° - 40° - 70° = 70°. Then use the Sine Rule: a/sin(A) = b/sin(B).',
-      'Step 1: Calculate ∠C = 180° - 40° - 70° = 70°. Step 2: Use Sine Rule: 8/sin(40°) = b/sin(70°). Step 3: b = (8 × sin(70°))/sin(40°) ≈ 12.2 km'
+      'Two angles and a side are known — that is an AAS case, so the Sine Rule applies.',
+      'Use a / sin A = b / sin B, then rearrange to solve for b.',
+      'b = (8 × sin 70°) / sin 40°.',
     ],
-    solution: 'Given: ∠A = 40°, ∠B = 70°, side a = 8 km\n\nStep 1: Find ∠C\n∠C = 180° - 40° - 70° = 70°\n\nStep 2: Apply Sine Rule\na/sin(A) = b/sin(B)\n8/sin(40°) = b/sin(70°)\n\nStep 3: Solve for b\nb = (8 × sin(70°))/sin(40°)\nb = (8 × 0.9397)/0.6428\nb = 7.5176/0.6428\nb ≈ 11.68 km',
-    answer: 11.68,
-    answerFormat: 'km'
   },
   {
     id: 'sine-easy-2',
-    title: 'Surveying Land - Finding Width of River',
-    description: 'A surveyor using angles to find the width of a river',
-    context: 'A land surveyor needs to find the width of a river without crossing it, using angle measurements from known points.',
+    title: "Measuring a River's Width",
+    context: 'A surveyor wants to find a distance across a river without crossing it.',
     difficulty: 'easy',
     mode: 'sine',
-    problemStatement: 'A surveyor stands at point A on one bank of a river and places a pole at point B, 50 meters away along the bank. From point A, the angle to a tree on the opposite bank (point C) is 55°. From point B, the angle to the tree is 65°. Find the distance from A to the tree (side b).',
-    givenValues: { 'Side a (AB)': '50 m', 'Angle at A': '55°', 'Angle at B': '65°' },
-    findWhat: 'Distance b (from A to tree)',
+    values: { sideA: 50, angleA: 55, angleB: 65 },
+    find: 'sideB',
+    unit: 'm',
     hints: [
-      'This involves an AAS case. Find the third angle first, then use Sine Rule.',
-      'Angle C = 180° - 55° - 65° = 60°. Use Sine Rule: 50/sin(60°) = b/sin(65°).',
-      'Step-by-step: ∠C = 60°, then b = (50 × sin(65°))/sin(60°) ≈ 52.7 m'
+      'This is another AAS case — two angles and one side are given.',
+      'Use a / sin A = b / sin B and rearrange to solve for b.',
+      'b = (50 × sin 65°) / sin 55°.',
     ],
-    solution: 'Given: ∠A = 55°, ∠B = 65°, side a = 50 m\n\nStep 1: Find ∠C\n∠C = 180° - 55° - 65° = 60°\n\nStep 2: Apply Sine Rule\na/sin(A) = b/sin(B)\n50/sin(60°) = b/sin(65°)\n\nStep 3: Solve for b\nb = (50 × sin(65°))/sin(60°)\nb = (50 × 0.9063)/0.8660\nb = 45.315/0.8660\nb ≈ 52.3 m',
-    answer: 52.3,
-    answerFormat: 'm'
   },
-
-  // MEDIUM SINE RULE QUESTIONS
   {
     id: 'sine-medium-1',
-    title: 'Aviation - Finding Distance Between Cities',
-    description: 'An aircraft navigation problem using the Sine Rule',
-    context: 'An aircraft needs to find the distance between two cities using known angles and a reference distance.',
+    title: 'Tracking an Aircraft',
+    context: 'Air traffic controllers triangulate an aircraft’s position using two measured angles.',
     difficulty: 'medium',
     mode: 'sine',
-    problemStatement: 'An aircraft at point C is flying between two cities at points A and B that are 250 km apart. The aircraft measures the angle at C to be 52°. From city A, the angle CAB is 38°. Find the distance from city B to the aircraft (side b).',
-    givenValues: { 'Distance AB': '250 km', 'Angle at C': '52°', 'Angle at A': '38°' },
-    findWhat: 'Distance b (from B to aircraft)',
+    values: { sideA: 250, angleA: 52, angleB: 38 },
+    find: 'sideB',
+    unit: 'km',
     hints: [
-      'Find angle B first using angle sum property. Then use Sine Rule.',
-      'Angle B = 180° - 38° - 52° = 90°. This is a right triangle! Use Sine Rule: 250/sin(52°) = b/sin(38°).',
-      'b = (250 × sin(38°))/sin(52°) = (250 × 0.6157)/0.7880 ≈ 195.1 km'
+      'Start by finding the third angle using the angle sum of a triangle (180°).',
+      '∠C = 180° − 52° − 38°. Notice it comes out to a right angle!',
+      'Use a / sin A = b / sin B to solve for b = (250 × sin 38°) / sin 52°.',
     ],
-    solution: 'Given: ∠A = 38°, ∠C = 52°, side a = 250 km\n\nStep 1: Find ∠B\n∠B = 180° - 38° - 52° = 90° (Right angle!)\n\nStep 2: Apply Sine Rule\na/sin(A) = b/sin(B)\n250/sin(52°) = b/sin(38°)\n\nWait, correcting formula:\n250/sin(52°) = b/sin(38°)\n\nStep 3: Solve for b\nb = (250 × sin(38°))/sin(52°)\nb = (250 × 0.6157)/0.7880\nb = 153.925/0.7880\nb ≈ 195.3 km',
-    answer: 195.3,
-    answerFormat: 'km'
+  },
+  {
+    id: 'sine-medium-2',
+    title: 'Zipline Course Planning',
+    context: 'An adventure park is planning zipline cables between three towers and needs an unknown cable length.',
+    difficulty: 'medium',
+    mode: 'sine',
+    values: { sideA: 36, angleA: 47.5, angleB: 100 },
+    find: 'sideC',
+    unit: 'm',
+    hints: [
+      '∠B is obtuse (100°) — the Sine Rule still works the same way for obtuse angles.',
+      'First find ∠C = 180° − 47.5° − 100°.',
+      'Then use a / sin A = c / sin C to solve for c.',
+    ],
+  },
+  {
+    id: 'sine-hard-1',
+    title: 'Mountain Rescue Triangulation',
+    context: 'A rescue helicopter crew uses two bearing angles from base camps to locate a stranded hiker.',
+    difficulty: 'hard',
+    mode: 'sine',
+    values: { sideA: 1450, angleA: 28.3, angleB: 124.6 },
+    find: 'sideC',
+    unit: 'm',
+    hints: [
+      'Decimal angles and an obtuse angle make this trickier, but the method is identical.',
+      'Find ∠C = 180° − 28.3° − 124.6° first — it will be a small angle.',
+      'Use the Sine Rule ratio a / sin A to find c = (1450 × sin C) / sin 28.3°.',
+    ],
+  },
+  {
+    id: 'sine-hard-2',
+    title: 'Drone Flight Path',
+    context: 'A drone operator tracks a delivery drone using angle measurements from two ground stations.',
+    difficulty: 'hard',
+    mode: 'sine',
+    values: { sideA: 612.4, angleA: 33.7, angleB: 118.9 },
+    find: 'sideC',
+    unit: 'm',
+    hints: [
+      'Keep extra decimal places during the calculation to avoid rounding errors.',
+      '∠C = 180° − 33.7° − 118.9°.',
+      'c = (612.4 × sin C) / sin 33.7°, rounded to 2 decimal places.',
+    ],
   },
 
-  // EASY COSINE RULE QUESTIONS
+  // ---- COSINE RULE ----
   {
     id: 'cosine-easy-1',
-    title: 'Building Triangular Garden - Finding Path Length',
-    description: 'A gardener designing a triangular garden plot',
-    context: 'A gardener has two garden beds of known length with a known angle between them, and needs to find the length of the path connecting their ends.',
+    title: 'Triangular Garden Path',
+    context: 'A gardener wants to connect the ends of two garden beds with a straight path.',
     difficulty: 'easy',
     mode: 'cosine',
-    problemStatement: 'A gardener designs a triangular garden with two sides measuring 8 meters and 12 meters, with an included angle of 60°. Find the length of the path connecting the two ends (side a).',
-    givenValues: { 'Side b': '8 m', 'Side c': '12 m', 'Angle A (included)': '60°' },
-    findWhat: 'Side a (path length)',
+    values: { sideB: 8, sideC: 12, angleA: 60 },
+    find: 'sideA',
+    unit: 'm',
     hints: [
-      'This is an SAS (Side-Angle-Side) case, perfect for the Cosine Rule.',
-      'Use the Cosine Rule: a² = b² + c² - 2bc·cos(A) = 64 + 144 - 2(8)(12)cos(60°).',
-      'a² = 208 - 192(0.5) = 208 - 96 = 112, so a = √112 ≈ 10.6 m'
+      'Two sides and the angle between them (the included angle) are known — that is an SAS case.',
+      'Use the Cosine Rule: a² = b² + c² − 2bc cos A.',
+      'a² = 8² + 12² − 2(8)(12) cos 60°, then take the square root.',
     ],
-    solution: 'Given: b = 8 m, c = 12 m, ∠A = 60°\n\nApply Cosine Rule:\na² = b² + c² - 2bc·cos(A)\na² = 8² + 12² - 2(8)(12)·cos(60°)\na² = 64 + 144 - 192(0.5)\na² = 208 - 96\na² = 112\na = √112\na ≈ 10.58 m',
-    answer: 10.58,
-    answerFormat: 'm'
   },
   {
     id: 'cosine-easy-2',
-    title: 'Bridge Construction - Finding Support Length',
-    description: 'Finding the length of a support beam in a triangular bridge structure',
-    context: 'An engineer needs to calculate the length of a diagonal support beam in a triangular framework.',
+    title: 'Bridge Support Beam',
+    context: 'An engineer needs the length of a diagonal beam connecting two other beams.',
     difficulty: 'easy',
     mode: 'cosine',
-    problemStatement: 'In a triangular bridge support structure, two beams of length 7 meters and 9 meters meet at an angle of 50°. Find the length of the third beam that completes the triangle (side a).',
-    givenValues: { 'Beam 1 (b)': '7 m', 'Beam 2 (c)': '9 m', 'Included angle (A)': '50°' },
-    findWhat: 'Beam 3 (side a)',
+    values: { sideB: 7, sideC: 9, angleA: 50 },
+    find: 'sideA',
+    unit: 'm',
     hints: [
-      'Use the Cosine Rule for this SAS case: a² = 7² + 9² - 2(7)(9)cos(50°).',
-      'Calculate: a² = 49 + 81 - 126(0.6428) = 130 - 80.99 ≈ 49.',
-      'a = √49.01 ≈ 7.0 m'
+      'This is an SAS case, so use the Cosine Rule.',
+      'a² = 7² + 9² − 2(7)(9) cos 50°.',
+      'Take the square root of your result to get a.',
     ],
-    solution: 'Given: b = 7 m, c = 9 m, ∠A = 50°\n\nApply Cosine Rule:\na² = b² + c² - 2bc·cos(A)\na² = 7² + 9² - 2(7)(9)·cos(50°)\na² = 49 + 81 - 126(0.6428)\na² = 130 - 80.99\na² ≈ 49.01\na ≈ 7.00 m',
-    answer: 7.00,
-    answerFormat: 'm'
   },
 
-  // MEDIUM COSINE RULE QUESTIONS
   {
     id: 'cosine-medium-1',
-    title: 'Surveying Mountain Triangle - Finding Distance',
-    description: 'A surveyor measuring distances in a mountainous region',
-    context: 'A surveying team needs to find a third distance in a triangular survey area.',
+    title: 'Surveying a Mountain Ridge',
+    context: 'A survey team measures two distances either side of a ridge and needs the direct distance across it.',
     difficulty: 'medium',
     mode: 'cosine',
-    problemStatement: 'A surveying team measures two distances on either side of a mountain ridge: 450 meters and 600 meters, with an angle of 85° between them. Find the direct distance across the ridge (side a).',
-    givenValues: { 'Side b': '450 m', 'Side c': '600 m', 'Angle A (at ridge)': '85°' },
-    findWhat: 'Direct distance a',
+    values: { sideB: 450, sideC: 600, angleA: 85 },
+    find: 'sideA',
+    unit: 'm',
     hints: [
-      'This is a challenging SAS case with a large angle. Use Cosine Rule carefully.',
-      'a² = 450² + 600² - 2(450)(600)cos(85°). Note: cos(85°) ≈ 0.0872.',
-      'a² = 202500 + 360000 - 540000(0.0872) ≈ 515688, so a ≈ 718.1 m'
+      'Large numbers, same method: a² = b² + c² − 2bc cos A.',
+      'cos 85° is a small positive number — make sure your calculator is in degree mode.',
+      'a² = 450² + 600² − 2(450)(600) cos 85°.',
     ],
-    solution: 'Given: b = 450 m, c = 600 m, ∠A = 85°\n\nApply Cosine Rule:\na² = b² + c² - 2bc·cos(A)\na² = 450² + 600² - 2(450)(600)·cos(85°)\na² = 202500 + 360000 - 540000(0.0872)\na² = 562500 - 47088\na² = 515412\na = √515412\na ≈ 717.9 m',
-    answer: 717.9,
-    answerFormat: 'm'
+  },
+  {
+    id: 'cosine-medium-2',
+    title: 'Sailing Race Course',
+    context: 'Race organisers need the distance of the final leg of a triangular sailing course.',
+    difficulty: 'medium',
+    mode: 'cosine',
+    values: { sideB: 18.5, sideC: 24.2, angleA: 72.4 },
+    find: 'sideA',
+    unit: 'km',
+    hints: [
+      'Decimals make the arithmetic trickier, but the formula is the same.',
+      'a² = 18.5² + 24.2² − 2(18.5)(24.2) cos 72.4°.',
+      'Keep several decimal places before rounding your final answer.',
+    ],
+  },
+  {
+    id: 'cosine-hard-1',
+    title: 'Crane Lifting Triangle',
+    context: 'A crane operator needs the length of a support cable forming an obtuse-angled triangle with two known cables.',
+    difficulty: 'hard',
+    mode: 'cosine',
+    values: { sideB: 320, sideC: 410, angleA: 132 },
+    find: 'sideA',
+    unit: 'm',
+    hints: [
+      '∠A is obtuse (132°), so cos A will be negative — this makes a² larger, not smaller.',
+      'a² = 320² + 410² − 2(320)(410) cos 132°.',
+      'Double-check the sign when substituting cos 132° (it is negative).',
+    ],
+  },
+  {
+    id: 'cosine-hard-2',
+    title: 'Satellite Ground Track',
+    context: 'Engineers model the triangle formed by a satellite and two ground stations.',
+    difficulty: 'hard',
+    mode: 'cosine',
+    values: { sideB: 1250.5, sideC: 980.75, angleA: 108.6 },
+    find: 'sideA',
+    unit: 'km',
+    hints: [
+      'Very large decimal values — work carefully and keep extra decimal places.',
+      'a² = 1250.5² + 980.75² − 2(1250.5)(980.75) cos 108.6°.',
+      'Since ∠A is obtuse, cos A is negative, which increases the result.',
+    ],
   },
 
-  // EASY AREA QUESTIONS
+  // ---- AREA FORMULA ----
   {
     id: 'area-easy-1',
-    title: 'Painting a Triangular Wall - Finding Area',
-    description: 'Finding the area of a triangular wall section for painting',
-    context: 'A painter needs to know the area of a triangular wall to estimate paint needed.',
+    title: 'Painting a Triangular Wall',
+    context: 'A painter needs the area of a triangular wall section to estimate how much paint to buy.',
     difficulty: 'easy',
     mode: 'area',
-    problemStatement: 'A triangular wall section has two sides measuring 6 meters and 8 meters, with an included angle of 75°. Find the area of the wall that needs to be painted.',
-    givenValues: { 'Side b': '6 m', 'Side c': '8 m', 'Included angle A': '75°' },
-    findWhat: 'Area K',
+    values: { sideB: 6, sideC: 8, angleA: 75 },
+    find: 'area',
+    unit: 'm',
     hints: [
-      'Use the area formula: K = ½ × b × c × sin(A).',
-      'K = ½ × 6 × 8 × sin(75°) = 24 × sin(75°).',
-      'Since sin(75°) ≈ 0.9659, K ≈ 24 × 0.9659 ≈ 23.2 m²'
+      'Two sides and the included angle are known — use the Area Formula.',
+      'K = ½ × b × c × sin A.',
+      'K = ½ × 6 × 8 × sin 75°.',
     ],
-    solution: 'Given: b = 6 m, c = 8 m, ∠A = 75°\n\nApply Area Formula:\nK = ½ × b × c × sin(A)\nK = ½ × 6 × 8 × sin(75°)\nK = 24 × sin(75°)\nK = 24 × 0.9659\nK ≈ 23.18 m²',
-    answer: 23.18,
-    answerFormat: 'm²'
   },
   {
     id: 'area-easy-2',
-    title: 'Tile Design - Finding Triangular Section Area',
-    description: 'Calculating area for a decorative triangular tile',
-    context: 'A tile designer needs to find the area of a triangular decorative tile.',
+    title: 'Decorative Tile Design',
+    context: 'A designer wants to know the area of a triangular decorative tile.',
     difficulty: 'easy',
     mode: 'area',
-    problemStatement: 'A decorative tile is triangular with sides of 5 cm and 7 cm forming a 45° angle between them. Calculate the area of the tile.',
-    givenValues: { 'Side b': '5 cm', 'Side c': '7 cm', 'Included angle A': '45°' },
-    findWhat: 'Area K',
+    values: { sideB: 5, sideC: 7, angleA: 45 },
+    find: 'area',
+    unit: 'cm',
     hints: [
-      'Use K = ½bc·sin(A) with the included angle.',
-      'K = ½ × 5 × 7 × sin(45°) = 17.5 × sin(45°).',
-      'sin(45°) = √2/2 ≈ 0.7071, so K ≈ 12.4 cm²'
+      'K = ½bc sin A works for any two sides with the angle between them.',
+      'K = ½ × 5 × 7 × sin 45°.',
+      'sin 45° = √2/2 ≈ 0.7071.',
     ],
-    solution: 'Given: b = 5 cm, c = 7 cm, ∠A = 45°\n\nApply Area Formula:\nK = ½ × b × c × sin(A)\nK = ½ × 5 × 7 × sin(45°)\nK = 17.5 × (√2/2)\nK = 17.5 × 0.7071\nK ≈ 12.37 cm²',
-    answer: 12.37,
-    answerFormat: 'cm²'
   },
-
-  // MEDIUM AREA QUESTIONS
   {
     id: 'area-medium-1',
-    title: 'Landscape Design - Finding Plot Area',
-    description: 'Calculating area of a triangular land plot for landscaping',
-    context: 'A landscape architect needs to find the area of a triangular plot.',
+    title: 'Landscaping a Plot of Land',
+    context: 'A landscape architect needs the area of a triangular plot before quoting a price.',
     difficulty: 'medium',
     mode: 'area',
-    problemStatement: 'A triangular plot of land has two sides of 85 meters and 120 meters, with an included angle of 68°. What is the total area that can be landscaped?',
-    givenValues: { 'Side b': '85 m', 'Side c': '120 m', 'Included angle A': '68°' },
-    findWhat: 'Area K',
+    values: { sideB: 85, sideC: 120, angleA: 68 },
+    find: 'area',
+    unit: 'm',
     hints: [
-      'Use the area formula: K = ½bc·sin(A).',
-      'K = ½ × 85 × 120 × sin(68°) = 5100 × sin(68°).',
-      'sin(68°) ≈ 0.9272, so K ≈ 4728.7 m²'
+      'Same formula, bigger numbers: K = ½bc sin A.',
+      'K = ½ × 85 × 120 × sin 68°.',
+      'Round your final answer to 2 decimal places.',
     ],
-    solution: 'Given: b = 85 m, c = 120 m, ∠A = 68°\n\nApply Area Formula:\nK = ½ × b × c × sin(A)\nK = ½ × 85 × 120 × sin(68°)\nK = 5100 × sin(68°)\nK = 5100 × 0.9272\nK ≈ 4728.72 m²',
-    answer: 4728.72,
-    answerFormat: 'm²'
+  },
+  {
+    id: 'area-medium-2',
+    title: 'Solar Panel Array',
+    context: 'An installer needs the area of a triangular section of roof reserved for solar panels.',
+    difficulty: 'medium',
+    mode: 'area',
+    values: { sideB: 14.5, sideC: 9.8, angleA: 112 },
+    find: 'area',
+    unit: 'm',
+    hints: [
+      '∠A is obtuse (112°) — sin is still positive for any angle between 0° and 180°.',
+      'K = ½ × 14.5 × 9.8 × sin 112°.',
+      'sin 112° ≈ 0.9272.',
+    ],
+  },
+  {
+    id: 'area-hard-1',
+    title: 'National Park Land Survey',
+    context: 'Surveyors need the area of a large triangular section of protected land.',
+    difficulty: 'hard',
+    mode: 'area',
+    values: { sideB: 560, sideC: 725, angleA: 96.5 },
+    find: 'area',
+    unit: 'm',
+    hints: [
+      'Large numbers and a decimal angle — work carefully through each step.',
+      'K = ½ × 560 × 725 × sin 96.5°.',
+      'sin 96.5° is close to 1, since 96.5° is close to 90°.',
+    ],
+  },
+  {
+    id: 'area-hard-2',
+    title: 'Industrial Roof Truss',
+    context: 'An engineer calculates the area of a very obtuse triangular truss panel.',
+    difficulty: 'hard',
+    mode: 'area',
+    values: { sideB: 18.75, sideC: 22.4, angleA: 142.3 },
+    find: 'area',
+    unit: 'm',
+    hints: [
+      '∠A is very obtuse (142.3°) — sin of an obtuse angle equals sin of its supplement, and is still positive.',
+      'K = ½ × 18.75 × 22.4 × sin 142.3°.',
+      'sin 142.3° = sin(180° − 142.3°) = sin 37.7°.',
+    ],
   },
 ];
 
@@ -342,6 +438,161 @@ const trianglePoints = {
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 const rounded = (value: number, digits = 2) => Number.isFinite(value) ? value.toFixed(digits) : '-';
 const isPositive = (value: number) => Number.isFinite(value) && value > 0;
+
+// Pure solvers shared by the main calculator and the practice exercise bank,
+// so both always agree on the same answer for the same inputs.
+const solveSine = (values: SineValues) => {
+  const { sideA, angleA, angleB } = values;
+  const angleC = 180 - angleA - angleB;
+  const valid = isPositive(sideA) && isPositive(angleA) && isPositive(angleB) && angleC > 0;
+  const ratio = valid ? sideA / Math.sin(toRadians(angleA)) : NaN;
+  return {
+    valid,
+    angleC,
+    sideB: valid ? ratio * Math.sin(toRadians(angleB)) : NaN,
+    sideC: valid ? ratio * Math.sin(toRadians(angleC)) : NaN,
+  };
+};
+
+const solveCosine = (values: CosineValues) => {
+  const { sideB, sideC, angleA } = values;
+  const valid = isPositive(sideB) && isPositive(sideC) && angleA > 0 && angleA < 180;
+  const sideASquared = valid
+    ? sideB ** 2 + sideC ** 2 - 2 * sideB * sideC * Math.cos(toRadians(angleA))
+    : NaN;
+  const sideA = sideASquared > 0 ? Math.sqrt(sideASquared) : NaN;
+  const angleB = valid && sideA > 0
+    ? (Math.acos(Math.max(-1, Math.min(1, (sideA ** 2 + sideC ** 2 - sideB ** 2) / (2 * sideA * sideC)))) * 180) / Math.PI
+    : NaN;
+  return {
+    valid: valid && Number.isFinite(sideA),
+    sideASquared,
+    sideA,
+    angleB,
+    angleC: valid && Number.isFinite(angleB) ? 180 - angleA - angleB : NaN,
+  };
+};
+
+const solveArea = (values: AreaValues) => {
+  const { sideB, sideC, angleA } = values;
+  const valid = isPositive(sideB) && isPositive(sideC) && angleA > 0 && angleA < 180;
+  return {
+    valid,
+    area: valid ? 0.5 * sideB * sideC * Math.sin(toRadians(angleA)) : NaN,
+  };
+};
+
+type DiagramLabelSet = Record<'labelA' | 'labelB' | 'labelC' | 'sideA' | 'sideB' | 'sideC', DiagramValue>;
+
+// Shows the given parts of a triangle in blue and leaves the rest blank/unknown,
+// without revealing any computed answer. Used by every unanswered practice question.
+const buildPracticeDiagram = (mode: ObliqueMode, values: SineValues | CosineValues | AreaValues): DiagramLabelSet => {
+  if (mode === 'sine') {
+    const { sideA, angleA, angleB } = values as SineValues;
+    return {
+      labelA: { text: `∠A = ${angleA}°`, kind: 'given' },
+      labelB: { text: `∠B = ${angleB}°`, kind: 'given' },
+      labelC: { text: '∠C', kind: 'unknown' },
+      sideA: { text: `a = ${sideA}`, kind: 'given' },
+      sideB: { text: 'b', kind: 'unknown' },
+      sideC: { text: 'c', kind: 'unknown' },
+    };
+  }
+
+  const { sideB, sideC, angleA } = values as CosineValues;
+  return {
+    labelA: { text: `∠A = ${angleA}°`, kind: 'given' },
+    labelB: { text: '∠B', kind: 'unknown' },
+    labelC: { text: '∠C', kind: 'unknown' },
+    sideA: { text: 'a', kind: 'unknown' },
+    sideB: { text: `b = ${sideB}`, kind: 'given' },
+    sideC: { text: `c = ${sideC}`, kind: 'given' },
+  };
+};
+
+const practiceFindLabel: Record<FindTarget, string> = {
+  angleC: '∠C',
+  sideB: 'side b',
+  sideC: 'side c',
+  sideA: 'side a',
+  area: 'the area',
+};
+
+const buildPracticePrompt = (exercise: PracticeExercise) => {
+  const { mode, values, find, unit } = exercise;
+  if (mode === 'sine') {
+    const { sideA, angleA, angleB } = values as SineValues;
+    return `Given ∠A = ${angleA}°, ∠B = ${angleB}°, and a = ${sideA} ${unit}, find ${practiceFindLabel[find]}.`;
+  }
+  const { sideB, sideC, angleA } = values as CosineValues;
+  return mode === 'cosine'
+    ? `Given b = ${sideB} ${unit}, c = ${sideC} ${unit}, and included ∠A = ${angleA}°, find side a.`
+    : `Given b = ${sideB} ${unit}, c = ${sideC} ${unit}, and included ∠A = ${angleA}°, find the area.`;
+};
+
+const practiceAnswerUnit = (exercise: PracticeExercise) =>
+  exercise.find === 'angleC' ? '°' : exercise.find === 'area' ? `${exercise.unit}²` : exercise.unit;
+
+const getExerciseAnswer = (exercise: PracticeExercise): number => {
+  if (exercise.mode === 'sine') {
+    const result = solveSine(exercise.values as SineValues);
+    return { angleC: result.angleC, sideB: result.sideB, sideC: result.sideC }[exercise.find as 'angleC' | 'sideB' | 'sideC'];
+  }
+  if (exercise.mode === 'cosine') return solveCosine(exercise.values as CosineValues).sideA;
+  return solveArea(exercise.values as AreaValues).area;
+};
+
+// Generates an accurate, numbered walkthrough from the exercise's own values,
+// so the worked solution always matches `getExerciseAnswer` exactly.
+const buildExerciseSteps = (exercise: PracticeExercise): string[] => {
+  const { unit } = exercise;
+  if (exercise.mode === 'sine') {
+    const values = exercise.values as SineValues;
+    const result = solveSine(values);
+    const steps = [
+      `List the given information: ∠A = ${values.angleA}°, ∠B = ${values.angleB}°, a = ${values.sideA} ${unit}.`,
+      `Find the third angle: ∠C = 180° − ${values.angleA}° − ${values.angleB}° = ${rounded(result.angleC, 1)}°.`,
+      'Write the Sine Rule: a / sin A = b / sin B = c / sin C.',
+    ];
+    if (exercise.find === 'sideB') {
+      steps.push(`Substitute to find b: b = (a × sin B) / sin A = (${values.sideA} × sin ${values.angleB}°) / sin ${values.angleA}°.`);
+      steps.push(`Calculate: b ≈ ${rounded(result.sideB)} ${unit}.`);
+    } else if (exercise.find === 'sideC') {
+      steps.push(`Substitute to find c: c = (a × sin C) / sin A = (${values.sideA} × sin ${rounded(result.angleC, 1)}°) / sin ${values.angleA}°.`);
+      steps.push(`Calculate: c ≈ ${rounded(result.sideC)} ${unit}.`);
+    } else {
+      steps.push(`The angle found above is the answer: ∠C ≈ ${rounded(result.angleC, 1)}°.`);
+    }
+    return steps;
+  }
+
+  if (exercise.mode === 'cosine') {
+    const values = exercise.values as CosineValues;
+    const result = solveCosine(values);
+    return [
+      `List the given information: b = ${values.sideB} ${unit}, c = ${values.sideC} ${unit}, included ∠A = ${values.angleA}°.`,
+      'Write the Cosine Rule: a² = b² + c² − 2bc cos A.',
+      `Substitute: a² = ${values.sideB}² + ${values.sideC}² − 2(${values.sideB})(${values.sideC}) cos ${values.angleA}°.`,
+      `Simplify: a² ≈ ${rounded(result.sideASquared)}.`,
+      `Take the square root: a ≈ ${rounded(result.sideA)} ${unit}.`,
+    ];
+  }
+
+  const values = exercise.values as AreaValues;
+  const result = solveArea(values);
+  return [
+    `List the given information: b = ${values.sideB} ${unit}, c = ${values.sideC} ${unit}, included ∠A = ${values.angleA}°.`,
+    'Write the Area Formula: K = ½ bc sin A.',
+    `Substitute: K = ½ × ${values.sideB} × ${values.sideC} × sin ${values.angleA}°.`,
+    `Calculate: K ≈ ${rounded(result.area)} ${unit}².`,
+  ];
+};
+
+const difficultyMeta: Record<PracticeLevel, { label: string; icon: string; badge: string }> = {
+  easy: { label: 'Easy', icon: '🟢', badge: 'border-emerald-300 bg-emerald-100 text-emerald-800' },
+  medium: { label: 'Medium', icon: '🟡', badge: 'border-amber-300 bg-amber-100 text-amber-800' },
+  hard: { label: 'Hard', icon: '🔴', badge: 'border-rose-300 bg-rose-100 text-rose-800' },
+};
 
 const getShortestAngleDelta = (startAngle: number, endAngle: number) => {
   let delta = endAngle - startAngle;
@@ -770,6 +1021,134 @@ const HintSystem = ({
   </div>
 );
 
+const ExerciseCard = ({ exercise }: { exercise: PracticeExercise }) => {
+  const [answer, setAnswer] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [hintLevel, setHintLevel] = useState(0);
+  const [showSolution, setShowSolution] = useState(false);
+
+  const diagram = buildPracticeDiagram(exercise.mode, exercise.values);
+  const correctAnswer = getExerciseAnswer(exercise);
+  const answerUnit = practiceAnswerUnit(exercise);
+  const answerDigits = exercise.find === 'angleC' ? 1 : 2;
+
+  const check = () => {
+    const entered = Number(answer);
+    const correct = Number.isFinite(entered) && Math.abs(entered - correctAnswer) < 0.06;
+    setFeedback(
+      correct
+        ? `Correct! ${practiceFindLabel[exercise.find]} ≈ ${rounded(correctAnswer, answerDigits)} ${answerUnit}.`
+        : 'Not quite yet. Try again, or reveal a hint below.',
+    );
+  };
+
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h5 className="text-lg font-extrabold text-slate-900">{exercise.title}</h5>
+        <span className={`rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-wide ${difficultyMeta[exercise.difficulty].badge}`}>
+          {difficultyMeta[exercise.difficulty].icon} {difficultyMeta[exercise.difficulty].label}
+        </span>
+      </div>
+      <p className="mt-1 text-sm text-slate-600">{exercise.context}</p>
+      <div className="mx-auto mt-4 max-w-xs">
+        <TriangleDiagram {...diagram} />
+      </div>
+      <p className="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-center text-sm font-bold text-blue-700">
+        {buildPracticePrompt(exercise)}
+      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+        <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+          <span className="sr-only">Your answer</span>
+          <input
+            type="number"
+            step="any"
+            value={answer}
+            onChange={(event) => { setAnswer(event.target.value); setFeedback(''); }}
+            placeholder="?"
+            className="h-11 w-24 rounded-lg border-2 border-blue-500 bg-white px-2 text-center text-lg font-bold text-slate-900 outline-none placeholder:text-slate-400 focus:border-purple-600"
+          />
+          <span className="pr-1 text-sm font-extrabold text-blue-600">{answerUnit}</span>
+        </label>
+        <button type="button" onClick={check} className="rounded-xl bg-blue-600 px-4 py-2.5 font-extrabold text-white hover:bg-blue-700">
+          Check
+        </button>
+      </div>
+      {feedback && (
+        <p role="status" className={`mt-3 text-center font-bold ${feedback.startsWith('Correct') ? 'text-emerald-700' : 'text-rose-700'}`}>
+          {feedback}
+        </p>
+      )}
+
+      <div className="mt-4 rounded-xl border border-yellow-300 bg-yellow-50 p-4">
+        <h6 className="font-extrabold text-yellow-900">💡 Hints ({hintLevel}/{exercise.hints.length})</h6>
+        {hintLevel > 0 && (
+          <ul className="mt-2 space-y-1 text-sm font-semibold text-yellow-900">
+            {exercise.hints.slice(0, hintLevel).map((hint, index) => <li key={index}>{index + 1}. {hint}</li>)}
+          </ul>
+        )}
+        {hintLevel < exercise.hints.length && (
+          <button
+            type="button"
+            onClick={() => setHintLevel((level) => level + 1)}
+            className="mt-3 rounded-full bg-yellow-500 px-4 py-1.5 text-sm font-bold text-white hover:bg-yellow-600"
+          >
+            Show hint {hintLevel + 1}
+          </button>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setShowSolution((value) => !value)}
+        className="mt-4 w-full rounded-xl border border-purple-300 bg-purple-50 px-4 py-2.5 font-extrabold text-purple-800 hover:bg-purple-100"
+      >
+        {showSolution ? 'Hide full step-by-step solution' : 'Show full step-by-step solution'}
+      </button>
+      {showSolution && (
+        <ol className="mt-3 list-decimal space-y-2 rounded-xl bg-slate-50 p-4 pl-9 text-sm font-semibold text-slate-800">
+          {buildExerciseSteps(exercise).map((step, index) => <li key={index}>{step}</li>)}
+        </ol>
+      )}
+    </article>
+  );
+};
+
+const difficultyOrder: PracticeLevel[] = ['easy', 'medium', 'hard'];
+
+const PracticeExerciseBank = ({ mode }: { mode: ObliqueMode }) => {
+  const exercises = practiceExerciseBank.filter((exercise) => exercise.mode === mode);
+  const modeLabel = modeOptions.find((option) => option.key === mode)?.label ?? '';
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg sm:p-7" aria-labelledby="practice-bank-heading">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-2xl" aria-hidden="true">📚</span>
+        <h3 id="practice-bank-heading" className="text-2xl font-extrabold text-slate-900">More Practice: Easy to Hard</h3>
+      </div>
+      <p className="mt-2 text-slate-700">
+        Work through these {modeLabel.toLowerCase()} questions in order. Each one has its own diagram, hints, and a full step-by-step solution if you get stuck.
+      </p>
+      <div className="mt-6 space-y-8">
+        {difficultyOrder.map((level) => {
+          const levelExercises = exercises.filter((exercise) => exercise.difficulty === level);
+          if (levelExercises.length === 0) return null;
+          return (
+            <div key={level}>
+              <h4 className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-extrabold uppercase tracking-wide ${difficultyMeta[level].badge}`}>
+                {difficultyMeta[level].icon} {difficultyMeta[level].label}
+              </h4>
+              <div className="mt-4 grid gap-5 lg:grid-cols-2">
+                {levelExercises.map((exercise) => <ExerciseCard key={exercise.id} exercise={exercise} />)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+};
+
 const ObliqueTriangleSolver = () => {
   const [mode, setMode] = useState<ObliqueMode>('sine');
   const [activeStep, setActiveStep] = useState(0);
@@ -788,46 +1167,11 @@ const ObliqueTriangleSolver = () => {
   const [hintLevel, setHintLevel] = useState<HintLevel>(0);
   const [hintAttempts, setHintAttempts] = useState(0);
 
-  const sineResult = useMemo(() => {
-    const { sideA, angleA, angleB } = sineValues;
-    const angleC = 180 - angleA - angleB;
-    const valid = isPositive(sideA) && isPositive(angleA) && isPositive(angleB) && angleC > 0;
-    const ratio = valid ? sideA / Math.sin(toRadians(angleA)) : NaN;
-    return {
-      valid,
-      angleC,
-      sideB: valid ? ratio * Math.sin(toRadians(angleB)) : NaN,
-      sideC: valid ? ratio * Math.sin(toRadians(angleC)) : NaN,
-    };
-  }, [sineValues]);
+  const sineResult = useMemo(() => solveSine(sineValues), [sineValues]);
 
-  const cosineResult = useMemo(() => {
-    const { sideB, sideC, angleA } = cosineValues;
-    const valid = isPositive(sideB) && isPositive(sideC) && angleA > 0 && angleA < 180;
-    const sideASquared = valid
-      ? sideB ** 2 + sideC ** 2 - 2 * sideB * sideC * Math.cos(toRadians(angleA))
-      : NaN;
-    const sideA = sideASquared > 0 ? Math.sqrt(sideASquared) : NaN;
-    const angleB = valid && sideA > 0
-      ? (Math.acos(Math.max(-1, Math.min(1, (sideA ** 2 + sideC ** 2 - sideB ** 2) / (2 * sideA * sideC)))) * 180) / Math.PI
-      : NaN;
-    return {
-      valid: valid && Number.isFinite(sideA),
-      sideASquared,
-      sideA,
-      angleB,
-      angleC: valid && Number.isFinite(angleB) ? 180 - angleA - angleB : NaN,
-    };
-  }, [cosineValues]);
+  const cosineResult = useMemo(() => solveCosine(cosineValues), [cosineValues]);
 
-  const areaResult = useMemo(() => {
-    const { sideB, sideC, angleA } = areaValues;
-    const valid = isPositive(sideB) && isPositive(sideC) && angleA > 0 && angleA < 180;
-    return {
-      valid,
-      area: valid ? 0.5 * sideB * sideC * Math.sin(toRadians(angleA)) : NaN,
-    };
-  }, [areaValues]);
+  const areaResult = useMemo(() => solveArea(areaValues), [areaValues]);
 
   const steps = useMemo<StepState[]>(() => {
     if (mode === 'sine') {
@@ -950,32 +1294,10 @@ const ObliqueTriangleSolver = () => {
 
   // Mirrors diagramLabels but keeps the values to solve for hidden, since this
   // diagram accompanies the unanswered "Try It Yourself!" practice question.
-  const practiceDiagramLabels = {
-    sine: {
-      labelA: { text: `∠A = ${sineValues.angleA}°`, kind: 'given' },
-      labelB: { text: `∠B = ${sineValues.angleB}°`, kind: 'given' },
-      labelC: { text: '∠C', kind: 'unknown' },
-      sideA: { text: `a = ${sineValues.sideA}`, kind: 'given' },
-      sideB: { text: 'b', kind: 'unknown' },
-      sideC: { text: 'c', kind: 'unknown' },
-    },
-    cosine: {
-      labelA: { text: `∠A = ${cosineValues.angleA}°`, kind: 'given' },
-      labelB: { text: '∠B', kind: 'unknown' },
-      labelC: { text: '∠C', kind: 'unknown' },
-      sideA: { text: 'a', kind: 'unknown' },
-      sideB: { text: `b = ${cosineValues.sideB}`, kind: 'given' },
-      sideC: { text: `c = ${cosineValues.sideC}`, kind: 'given' },
-    },
-    area: {
-      labelA: { text: `∠A = ${areaValues.angleA}°`, kind: 'given' },
-      labelB: { text: '∠B', kind: 'unknown' },
-      labelC: { text: '∠C', kind: 'unknown' },
-      sideA: { text: 'a', kind: 'unknown' },
-      sideB: { text: `b = ${areaValues.sideB}`, kind: 'given' },
-      sideC: { text: `c = ${areaValues.sideC}`, kind: 'given' },
-    },
-  }[mode] as Record<'labelA' | 'labelB' | 'labelC' | 'sideA' | 'sideB' | 'sideC', DiagramValue>;
+  const practiceDiagramLabels = buildPracticeDiagram(
+    mode,
+    mode === 'sine' ? sineValues : mode === 'cosine' ? cosineValues : areaValues,
+  );
 
   const labellingFields = mode === 'sine'
     ? [
@@ -1495,6 +1817,8 @@ const ObliqueTriangleSolver = () => {
             </div>
             {practiceFeedback && <p role="status" className={`mt-4 text-center font-bold ${practiceFeedback.startsWith('Excellent') ? 'text-emerald-700' : 'text-rose-700'}`}>{practiceFeedback}</p>}
           </section>
+
+          <PracticeExerciseBank mode={mode} />
         </div>
       </div>
     </section>
